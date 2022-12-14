@@ -4,67 +4,39 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Serveur {
 
   public static void main(String[] test) {
     final ServerSocket serveurSocket;
-    final Socket clientSocket;
     final BufferedReader in;
     final PrintWriter out;
     final Scanner sc = new Scanner(System.in);
+    final boolean quit = false;
+    final List<Socket> clients = new ArrayList<Socket>();
 
     try {
       serveurSocket = new ServerSocket(5001);
-      clientSocket = serveurSocket.accept();
-      out = new PrintWriter(clientSocket.getOutputStream());
-      in =
-        new BufferedReader(
-          new InputStreamReader(clientSocket.getInputStream())
+      System.out.println("Serveur démarré");
+
+      // On cherche à se connécter en permanance a un nouveau client
+      while (!quit) {
+        clients.add(serveurSocket.accept());
+        // Quand un client se connecte on l'ajoute a la liste des clients
+        System.out.println("Client connecté");
+        ServeurEnvoyer envoi = new ServeurEnvoyer(
+          clients.get(clients.size() - 1)
         );
-      Thread envoi = new Thread(
-        new Runnable() {
-          String msg;
+        envoi.start();
 
-          @Override
-          public void run() {
-            while (true) {
-              msg = sc.nextLine();
-              out.println(msg);
-              out.flush();
-            }
-          }
-        }
-      );
-      envoi.start();
-
-      Thread recevoir = new Thread(
-        new Runnable() {
-          String msg;
-
-          @Override
-          public void run() {
-            try {
-              msg = in.readLine();
-              //tant que le client est connecté
-              while (msg != null) {
-                System.out.println("Client : " + msg);
-                msg = in.readLine();
-              }
-              //sortir de la boucle si le client a déconecté
-              System.out.println("Client déconecté");
-              //fermer le flux et la session socket
-              out.close();
-              clientSocket.close();
-              serveurSocket.close();
-            } catch (IOException e) {
-              e.printStackTrace();
-            }
-          }
-        }
-      );
-      recevoir.start();
+        ServeurEcouter recevoir = new ServeurEcouter(
+          clients.get(clients.size() - 1)
+        );
+        recevoir.start();
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }
