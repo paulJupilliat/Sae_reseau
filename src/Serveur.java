@@ -2,36 +2,28 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 
-/*
- * www.codeurjava.com
- */
-public class Client {
+public class Serveur {
 
-  public static void main(String[] args) {
+  public static void main(String[] test) {
+    final ServerSocket serveurSocket;
     final Socket clientSocket;
     final BufferedReader in;
     final PrintWriter out;
-    final Scanner sc = new Scanner(System.in); //pour lire à partir du clavier
+    final Scanner sc = new Scanner(System.in);
 
     try {
-      /*
-       * les informations du serveur ( port et adresse IP ou nom d'hote
-       * 127.0.0.1 est l'adresse local de la machine
-       */
-      clientSocket = new Socket("127.0.0.1", 5000);
-
-      //flux pour envoyer
+      serveurSocket = new ServerSocket(5001);
+      clientSocket = serveurSocket.accept();
       out = new PrintWriter(clientSocket.getOutputStream());
-      //flux pour recevoir
       in =
         new BufferedReader(
           new InputStreamReader(clientSocket.getInputStream())
         );
-
-      Thread envoyer = new Thread(
+      Thread envoi = new Thread(
         new Runnable() {
           String msg;
 
@@ -45,7 +37,7 @@ public class Client {
           }
         }
       );
-      envoyer.start();
+      envoi.start();
 
       Thread recevoir = new Thread(
         new Runnable() {
@@ -55,13 +47,17 @@ public class Client {
           public void run() {
             try {
               msg = in.readLine();
+              //tant que le client est connecté
               while (msg != null) {
-                System.out.println("Serveur : " + msg);
+                System.out.println("Client : " + msg);
                 msg = in.readLine();
               }
-              System.out.println("Serveur déconecté");
+              //sortir de la boucle si le client a déconecté
+              System.out.println("Client déconecté");
+              //fermer le flux et la session socket
               out.close();
               clientSocket.close();
+              serveurSocket.close();
             } catch (IOException e) {
               e.printStackTrace();
             }
