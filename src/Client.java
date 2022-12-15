@@ -8,7 +8,7 @@ public class Client {
 
 
     try {
-      clientSocket = new Socket("192.168.28.83", 5001);
+      clientSocket = new Socket("192.168.13.197", 5001);
       ClientEnvoyer envoyer = new ClientEnvoyer(clientSocket);
       ClientRecevoir recevoir = new ClientRecevoir(clientSocket);
       envoyer.start();

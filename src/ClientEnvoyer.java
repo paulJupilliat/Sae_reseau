@@ -15,7 +15,6 @@ public class ClientEnvoyer extends Thread {
   public ClientEnvoyer(Socket clientSocket) throws IOException {
     sc = new Scanner(System.in);
     out = new PrintWriter(clientSocket.getOutputStream());
-    new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
   }
 
   @Override
