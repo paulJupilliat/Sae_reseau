@@ -7,26 +7,34 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class ServeurEcouter extends Thread {
+  private final Serveur serveur;
   private String msg;
-  final Socket clientSocket;
-  final BufferedReader in;
-  final PrintWriter out;
+  private final Socket clientSocket;
+  private final BufferedReader in;
+  private final PrintWriter out;
   Scanner sc;
 
-    public ServeurEcouter(Socket socket) throws IOException{
-        this.clientSocket = socket;
-        this.out = new PrintWriter(this.clientSocket.getOutputStream());
-        this.in = new BufferedReader(new InputStreamReader(this.clientSocket.getInputStream()));
-    }
+  public ServeurEcouter(Socket socket, Serveur serveur)
+    throws IOException {
+    this.clientSocket = socket;
+    this.serveur = serveur;
+    this.out = new PrintWriter(this.clientSocket.getOutputStream());
+    this.in =
+      new BufferedReader(
+        new InputStreamReader(this.clientSocket.getInputStream())
+      );
+  }
 
   @Override
   public void run() {
-      try {
-        msg = in.readLine();
-      System.out.println(msg);
+    try {
+      msg = in.readLine();
       //tant que le client est connecté
       while (msg != null) {
         System.out.println("Client : " + msg);
+        //envoyer un message au client
+        serveur.sendToAll(msg);
+        out.flush();
         msg = in.readLine();
       }
       //sortir de la boucle si le client a déconecté

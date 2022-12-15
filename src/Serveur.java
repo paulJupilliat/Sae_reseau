@@ -1,44 +1,59 @@
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Serveur {
+  private ServerSocket serveurSocket;
+  private final Scanner sc;
+  private boolean quit = false;
+  private Map<Socket, Tuple> clients;
 
-  public static void main(String[] test) {
-    final ServerSocket serveurSocket;
-    final BufferedReader in;
-    final PrintWriter out;
-    final Scanner sc = new Scanner(System.in);
-    final boolean quit = false;
-    final List<Socket> clients = new ArrayList<Socket>();
-
+  public Serveur(int port) {
     try {
-      serveurSocket = new ServerSocket(5001);
-      System.out.println("Serveur démarré");
+      this.serveurSocket = new ServerSocket(port);
+    } catch (IOException e1) {
+      System.err.println("Erreur lors de la connexion : " + e1.getMessage());
+    }
+    System.out.println("Serveur démarré");
+    this.clients = new HashMap<>();
+    this.sc = new Scanner(System.in);
+  }
 
-      // On cherche à se connécter en permanance a un nouveau client
-      while (!quit) {
-        clients.add(serveurSocket.accept());
-        // Quand un client se connecte on l'ajoute a la liste des clients
+  public void start() {
+    try {
+      while (this.quit == false) {
+        Socket client = this.serveurSocket.accept();
+        this.clients.put(
+            client,
+            new Tuple(new ServeurEcouter(client, this), new ServeurEnvoyer(client)));
+        this.clients.get(client).getEnvoyer().start();
+        this.clients.get(client).getRecevoir().start();
         System.out.println("Client connecté");
-        ServeurEnvoyer envoi = new ServeurEnvoyer(
-          clients.get(clients.size() - 1)
-        );
-        envoi.start();
-
-        ServeurEcouter recevoir = new ServeurEcouter(
-          clients.get(clients.size() - 1)
-        );
-        recevoir.start();
       }
     } catch (IOException e) {
-      e.printStackTrace();
+      System.err.println("Erreur lors de la connexion : " + e.getMessage());
     }
+  }
+  
+  public void stop() {
+    this.quit = true;
+  }
+
+  /**
+   * Envoie un message à tous les clients
+   * @param msg (String) le message à envoyer
+   */
+  public void sendToAll(String msg) {
+    for (Socket client : this.clients.keySet()) {
+      this.clients.get(client).getEnvoyer().send(msg);
+    }
+  }
+
+  public static void main(String[] test) {
+    Serveur serveur = new Serveur(5001);
+    serveur.start();
   }
 }

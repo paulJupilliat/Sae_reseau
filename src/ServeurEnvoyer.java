@@ -23,4 +23,9 @@ public class ServeurEnvoyer extends Thread {
       out.flush();
     }
   }
+
+  public void send(String msg2) {
+    out.println(msg2);
+    out.flush();
+  }
 }
