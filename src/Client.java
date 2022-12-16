@@ -7,6 +7,7 @@ import java.net.UnknownHostException;
  * 
  */
 public class Client {
+  private String nom;
   private final Socket clSocket;
   private ClientEnvoyer envoyer;
   private ClientRecevoir recevoir;

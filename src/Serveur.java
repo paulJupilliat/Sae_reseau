@@ -1,7 +1,9 @@
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -9,7 +11,7 @@ public class Serveur {
   private ServerSocket serveurSocket;
   private final Scanner sc;
   private boolean quit = false;
-  private Map<Socket, Tuple> clients;
+  private List<Session> clients;
 
   public Serveur(int port) {
     try {
@@ -17,8 +19,8 @@ public class Serveur {
     } catch (IOException e1) {
       System.err.println("Erreur lors de la connexion : " + e1.getMessage());
     }
-    System.out.println("Serveur démarré");
-    this.clients = new HashMap<>();
+    System.out.println("Serveur démarré sur le port: " + port);
+    this.clients = new ArrayList<Session>();
     this.sc = new Scanner(System.in);
   }
 
@@ -26,10 +28,9 @@ public class Serveur {
     try {
       while (this.quit == false) {
         Socket client = this.serveurSocket.accept();
-        this.clients.put(
-            client,
-            new Tuple(new ServeurEcouter(client, this), new ServeurEnvoyer(client)));
-        this.clients.get(client).getEnvoyer().start();
+        String nom = this.sc.nextLine();
+        this.clients.add(new Session(new ServeurEcouter(client, this), new ServeurEnvoyer(client, this), nom, client));
+        this.clients.get().getEnvoyer().start();
         this.clients.get(client).getRecevoir().start();
         System.out.println("Client connecté");
       }
@@ -50,10 +51,5 @@ public class Serveur {
     for (Socket client : this.clients.keySet()) {
       this.clients.get(client).getEnvoyer().send(msg);
     }
-  }
-
-  public static void main(String[] test) {
-    Serveur serveur = new Serveur(5001);
-    serveur.start();
   }
 }

@@ -19,8 +19,7 @@ public class ServeurEnvoyer extends Thread {
   public void run() {
     while (true) {
       msg = sc.nextLine();
-      out.println(msg);
-      out.flush();
+      send(msg);
     }
   }
 
