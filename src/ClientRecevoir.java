@@ -16,8 +16,15 @@ public class ClientRecevoir extends Thread {
     this.clientSocket = clientSocket;
     this.client = client;
     out = new PrintWriter(clientSocket.getOutputStream());
-    in =
-      new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+    in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+  }
+  
+    private String demandePseudo() {
+    Scanner sc = new Scanner(System.in);
+    System.out.println("Entrez votre pseudo : ");
+    String pseudo = sc.nextLine();
+    this.client.send("pseudo " + pseudo);
+    return pseudo;
   }
 
   @Override
@@ -27,17 +34,7 @@ public class ClientRecevoir extends Thread {
       while (msg != null) {
         // Si on demande le pseudo
         if (msg.equals("Entrez votre pseudo : ")) {
-          // On demande le pseudo
-          Scanner sc = new Scanner(System.in);
-          String pseudo = sc.nextLine();
-          // On envoie le pseudo
-          this.out.println("pseudo " + pseudo);
-          this.out.flush();
-          // On enregistre le pseudo
-          this.client.setNom(pseudo);
-          System.out.println("Vous êtes connecté en tant que " + pseudo);
-          sc.close();
-          msg = in.readLine();
+          client.setNom(this.demandePseudo());
         } else {
           System.out.println("Client1 : " + msg);
           msg = in.readLine();
@@ -50,4 +47,6 @@ public class ClientRecevoir extends Thread {
       e.printStackTrace();
     }
   }
+
+
 }

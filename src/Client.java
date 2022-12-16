@@ -12,7 +12,11 @@ public class Client {
   }
   
   public void setNom(String nom) {
-      this.nom = nom;
+    this.nom = nom;
+  }
+  
+  public void send(String msg) {
+    this.envoyer.send(msg);
   }
     
   public Client(String ip, int port) {

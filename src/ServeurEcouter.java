@@ -39,6 +39,7 @@ public class ServeurEcouter extends Thread {
       //tant que le client est connecté
       while (!msg.equals("quit")) {
         if (msg.contains("pseudo")) {
+          System.out.println("pseudo");
           String pseudo = msg.split(" ")[1];
           this.send("Vous êtes connecté en tant que " + pseudo);
         } else {
