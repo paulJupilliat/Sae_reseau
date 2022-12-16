@@ -4,7 +4,6 @@ public class Session {
   private Socket socket;
   private Serveur serveur;
   ServeurEcouter serveurEcouter;
-  private String nom;
 
   public Session(Socket socket, Serveur serveur) {
     try {

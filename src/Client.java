@@ -1,21 +1,33 @@
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Client {
-  
-  public static void main(String[] args) {
-    final Socket clientSocket;
-
-
-    try {
-      clientSocket = new Socket("localhost", 5000);
+  private Socket clientSocket;
+  private String nom;
+    
+  public Client(String ip, int port) {
+     try {
+      clientSocket = new Socket(ip, port);
       ClientEnvoyer envoyer = new ClientEnvoyer(clientSocket);
       ClientRecevoir recevoir = new ClientRecevoir(clientSocket);
+      // demander le nom de la personne et afficher vous êtes connecté en tant que ...
+      Scanner sc = new Scanner(System.in);
+      System.out.println("Entrez votre nom : ");
+      String nomEntre = sc.nextLine();
+      this.nom = nomEntre;
+      System.out.println("Vous êtes connecté en tant que " + this.nom);
+      // On lance les threads
       envoyer.start();
       recevoir.start();
-
     } catch (IOException e) {
-      System.err.println("Erreur lors de la connexion : " + e.getMessage());
+      e.printStackTrace();
     }
+  }
+
+  
+  public static void main(String[] args) {
+    Client client = new Client("localhost", 5000);
+   
   }
 }

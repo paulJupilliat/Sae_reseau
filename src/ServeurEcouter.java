@@ -28,7 +28,6 @@ public class ServeurEcouter extends Thread {
 
   @Override
   public void run() {
-    System.out.println("aaaaaaaaaaaaa " + this.serveur);
     try {
       msg = in.readLine();
       System.out.println(msg);
