@@ -27,18 +27,18 @@ public class Serveur {
         clients.add(serveurSocket.accept());
         // Quand un client se connecte on l'ajoute a la liste des clients
         System.out.println("Client connecté");
-        ServeurEnvoyer envoi = new ServeurEnvoyer(
-          clients.get(clients.size() - 1)
-        );
-        envoi.start();
 
         ServeurEcouter recevoir = new ServeurEcouter(
-          clients.get(clients.size() - 1)
-        );
+            clients.get(clients.size() - 1));
         recevoir.start();
       }
     } catch (IOException e) {
       e.printStackTrace();
     }
   }
+
+  public List<Socket> getClients() {
+    return this.clients;
+  }
+
 }
