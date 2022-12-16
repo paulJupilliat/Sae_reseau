@@ -1,0 +1,10 @@
+class ClientEnvoyer
+!!!128258.java!!!	ClientEnvoyer(inout clientSocket : Socket)
+    sc = new Scanner(System.in);
+    out = new PrintWriter(clientSocket.getOutputStream());
+!!!128386.java!!!	run() : void
+    while (true) {
+      msg = sc.nextLine();
+      out.println(msg);
+      out.flush();
+    }

@@ -1,0 +1,11 @@
+class Tuple
+!!!129538.java!!!	Tuple()
+        this.recevoir = null;
+        this.envoyer = null;
+!!!129666.java!!!	Tuple(inout recevoir : ServeurEcouter, inout envoyer : ServeurEnvoyer)
+        this.recevoir = recevoir;
+        this.envoyer = envoyer;
+!!!129794.java!!!	getRecevoir() : ServeurEcouter
+        return recevoir;
+!!!129922.java!!!	getEnvoyer() : ServeurEnvoyer
+        return envoyer;
