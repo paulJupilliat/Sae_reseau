@@ -9,6 +9,11 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Serveur {
+  private final List<Socket> clients = new ArrayList<Socket>();
+  public List<Socket> getClients() {
+    return this.clients;
+  }
+
 
   public static void main(String[] test) {
     final ServerSocket serveurSocket;
@@ -17,6 +22,8 @@ public class Serveur {
     final Scanner sc = new Scanner(System.in);
     final boolean quit = false;
     final List<Socket> clients = new ArrayList<Socket>();
+
+    
 
     try {
       serveurSocket = new ServerSocket(5001);
@@ -35,10 +42,8 @@ public class Serveur {
     } catch (IOException e) {
       e.printStackTrace();
     }
+    
   }
 
-  public List<Socket> getClients() {
-    return this.clients;
-  }
-
+ 
 }

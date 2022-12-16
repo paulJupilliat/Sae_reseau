@@ -20,7 +20,10 @@ public class ServeurEcouter extends Thread {
         this.in = new BufferedReader(new InputStreamReader(this.clientSocket.getInputStream()));
     }
     public void sendAll(String message){
-      for(Socket socket : this.getClients())
+      for(Socket socket : this.s.getClients()){
+        out.println(message);
+        out.flush();
+      }
 
     }
 
@@ -33,9 +36,9 @@ public class ServeurEcouter extends Thread {
       while (msg != "quit") {
         System.out.println("Client : " + msg);
         //envoie a tous les clients
-
-        out.println(msg);
-        out.flush();
+        sendAll(msg);
+        // out.println(msg);
+        // out.flush();
         msg = in.readLine();
         
         
