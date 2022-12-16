@@ -3,7 +3,8 @@ import java.net.Socket;
 public class Session {
   private Socket socket;
   private Serveur serveur;
-  ServeurEcouter serveurEcouter;
+  private ServeurEcouter serveurEcouter;
+  private String pseudo;
 
   public Session(Socket socket, Serveur serveur) {
     try {

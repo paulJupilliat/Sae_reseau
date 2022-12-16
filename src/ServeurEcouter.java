@@ -8,22 +8,28 @@ import java.util.Scanner;
 public class ServeurEcouter extends Thread {
   private String msg;
   private Serveur serveur;
-  final Socket clientSocket;
-  final BufferedReader in;
-  final PrintWriter out;
-  Scanner sc;
+  private final Socket clientSocket;
+  private final BufferedReader in;
+  private final PrintWriter out;
 
   public ServeurEcouter(Socket socket, Serveur serveur) throws IOException {
     this.clientSocket = socket;
     this.serveur = serveur;
     this.out = new PrintWriter(this.clientSocket.getOutputStream());
-    this.in = new BufferedReader(
-        new InputStreamReader(this.clientSocket.getInputStream()));
+    this.in =
+      new BufferedReader(
+        new InputStreamReader(this.clientSocket.getInputStream())
+        );
+    this.demandePseudo();
   }
-  
+
   public void send(String msg) {
     this.out.println(msg);
     this.out.flush();
+  }
+
+  public void demandePseudo() {
+    this.send("Entrez votre pseudo : ");
   }
 
   @Override
@@ -33,9 +39,14 @@ public class ServeurEcouter extends Thread {
       System.out.println(msg);
       //tant que le client est connecté
       while (!msg.equals("quit")) {
-        System.out.println("Client : " + msg);
-        //envoie a tous les clients
-        serveur.sendAll(msg);
+        if (msg.contains("pseudo")) {
+          String pseudo = msg.split(" ")[1];
+          this.send("Vous êtes connecté en tant que " + pseudo);
+        } else {
+          System.out.println("Client : " + msg);
+          //envoie a tous les clients
+          serveur.sendAll(msg);
+        }
         msg = in.readLine();
       }
 

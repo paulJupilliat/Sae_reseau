@@ -17,7 +17,7 @@ public class Serveur {
     } catch (IOException e) {
       System.out.println("Erreur lors de la création du serveur");
     }
-    
+
   }
 
   public void sendAll(String message) {
@@ -46,4 +46,5 @@ public class Serveur {
     Serveur serveur = new Serveur(5000);
     serveur.launch();
   }
+
 }

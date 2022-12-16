@@ -10,10 +10,11 @@ public class ClientRecevoir extends Thread {
   private final Socket clientSocket;
   private final PrintWriter out;
   private final BufferedReader in;
+  private Client client;
 
-  public ClientRecevoir(Socket clientSocket) throws IOException {
+  public ClientRecevoir(Socket clientSocket, Client client) throws IOException {
     this.clientSocket = clientSocket;
-    new Scanner(System.in);
+    this.client = client;
     out = new PrintWriter(clientSocket.getOutputStream());
     in =
       new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -24,12 +25,27 @@ public class ClientRecevoir extends Thread {
     try {
       msg = in.readLine();
       while (msg != null) {
-        System.out.println("Client1 : " + msg);
-        msg = in.readLine();
+        // Si on demande le pseudo
+        if (msg.equals("Entrez votre pseudo : ")) {
+          // On demande le pseudo
+          Scanner sc = new Scanner(System.in);
+          String pseudo = sc.nextLine();
+          // On envoie le pseudo
+          this.out.println("pseudo " + pseudo);
+          this.out.flush();
+          // On enregistre le pseudo
+          this.client.setNom(pseudo);
+          System.out.println("Vous êtes connecté en tant que " + pseudo);
+          sc.close();
+          msg = in.readLine();
+        } else {
+          System.out.println("Client1 : " + msg);
+          msg = in.readLine();
+        }
+        System.out.println("Serveur déconecté");
+        out.close();
+        clientSocket.close();
       }
-      System.out.println("Serveur déconecté");
-      out.close();
-      clientSocket.close();
     } catch (IOException e) {
       e.printStackTrace();
     }
