@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Scanner;
 
 /**
  * Permet de creer un client qui peut envoyer et recevoir des messages
@@ -14,6 +15,11 @@ public class Client {
 
   public Client(Socket clSocket) {
     this.clSocket = clSocket;
+    // demander le nom d'utilisateur
+    Scanner sc = new Scanner(System.in);
+    System.out.println("Entrez votre nom d'utilisateur : ");
+    this.nom = sc.nextLine();
+    sc.close();
   }
   
   /**

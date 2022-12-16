@@ -2,40 +2,30 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+
 
 public class Serveur {
-  private ServerSocket serveurSocket;
-  private final Scanner sc;
-  private boolean quit = false;
+  private ServerSocket socketServeur;
   private List<Session> clients;
+  private boolean quit;
 
-  public Serveur(int port) {
-    try {
-      this.serveurSocket = new ServerSocket(port);
-    } catch (IOException e1) {
-      System.err.println("Erreur lors de la connexion : " + e1.getMessage());
-    }
-    System.out.println("Serveur démarré sur le port: " + port);
-    this.clients = new ArrayList<Session>();
-    this.sc = new Scanner(System.in);
+  public Serveur(int port) throws IOException {
+    this.socketServeur = new ServerSocket(port);
+    this.clients = new ArrayList<>();
+    this.quit = false;
   }
 
   public void start() {
-    try {
-      while (this.quit == false) {
-        Socket client = this.serveurSocket.accept();
-        String nom = this.sc.nextLine();
-        this.clients.add(new Session(new ServeurEcouter(client, this), new ServeurEnvoyer(client, this), nom, client));
-        this.clients.get().getEnvoyer().start();
-        this.clients.get(client).getRecevoir().start();
-        System.out.println("Client connecté");
+    System.out.println("Serveur démarré sur le port " + this.socketServeur.getLocalPort());
+    while (!this.quit) {
+      try {
+        Socket socketClient = this.socketServeur.accept();
+        this.clients.add(new Session(socketClient, this));
+        this.clients.get(this.clients.size() - 1).start();
+      } catch (IOException e) {
+        e.printStackTrace();
       }
-    } catch (IOException e) {
-      System.err.println("Erreur lors de la connexion : " + e.getMessage());
     }
   }
   
@@ -48,8 +38,12 @@ public class Serveur {
    * @param msg (String) le message à envoyer
    */
   public void sendToAll(String msg) {
-    for (Socket client : this.clients.keySet()) {
-      this.clients.get(client).getEnvoyer().send(msg);
+    for (Session client : this.clients) {
+      client.getRecevoir().send(msg);
     }
+  }
+
+  public ServerSocket getSocketServeur() {
+      return this.socketServeur;
   }
 }
