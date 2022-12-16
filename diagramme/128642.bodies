@@ -1,0 +1,33 @@
+class Serveur
+!!!130050.java!!!	Serveur(in port : int)
+    try {
+      this.serveurSocket = new ServerSocket(port);
+    } catch (IOException e1) {
+      System.err.println("Erreur lors de la connexion : " + e1.getMessage());
+    }
+    System.out.println("Serveur démarré");
+    this.clients = new HashMap<>();
+    this.sc = new Scanner(System.in);
+!!!130178.java!!!	start() : void
+    try {
+      while (this.quit == false) {
+        Socket client = this.serveurSocket.accept();
+        this.clients.put(
+            client,
+            new Tuple(new ServeurEcouter(client, this), new ServeurEnvoyer(client)));
+        this.clients.get(client).getEnvoyer().start();
+        this.clients.get(client).getRecevoir().start();
+        System.out.println("Client connecté");
+      }
+    } catch (IOException e) {
+      System.err.println("Erreur lors de la connexion : " + e.getMessage());
+    }
+!!!130306.java!!!	stop() : void
+    this.quit = true;
+!!!130434.java!!!	sendToAll(in msg : String) : void
+    for (Socket client : this.clients.keySet()) {
+      this.clients.get(client).getEnvoyer().send(msg);
+    }
+!!!130562.java!!!	main(inout test : String [[]]) : void
+    Serveur serveur = new Serveur(5001);
+    serveur.start();

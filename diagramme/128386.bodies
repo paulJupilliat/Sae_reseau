@@ -1,0 +1,20 @@
+class ClientRecevoir
+!!!128770.java!!!	ClientRecevoir(inout clientSocket : Socket)
+    this.clientSocket = clientSocket;
+    new Scanner(System.in);
+    out = new PrintWriter(clientSocket.getOutputStream());
+    in =
+      new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+!!!128898.java!!!	run() : void
+    try {
+      msg = in.readLine();
+      while (msg != null) {
+        System.out.println("Serveur : " + msg);
+        msg = in.readLine();
+      }
+      System.out.println("Serveur déconecté");
+      out.close();
+      clientSocket.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }

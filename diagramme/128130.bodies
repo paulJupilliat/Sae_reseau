@@ -1,0 +1,12 @@
+class Client
+!!!128002.java!!!	Client(inout clSocket : Socket)
+    this.clSocket = clSocket;
+!!!128130.java!!!	start() : void
+    try{
+      this.envoyer = new ClientEnvoyer(this.clSocket);
+      this.recevoir = new ClientRecevoir(this.clSocket);
+      this.envoyer.start();
+      this.recevoir.start();
+    } catch (IOException e) {
+      System.err.println("Erreur lors de la connexion : " + e.getMessage());
+    }

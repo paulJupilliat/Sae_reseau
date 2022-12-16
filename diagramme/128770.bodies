@@ -1,0 +1,28 @@
+class ServeurEcouter
+!!!128514.java!!!	ServeurEcouter(inout socket : Socket, inout serveur : Serveur)
+    this.clientSocket = socket;
+    this.serveur = serveur;
+    this.out = new PrintWriter(this.clientSocket.getOutputStream());
+    this.in =
+      new BufferedReader(
+        new InputStreamReader(this.clientSocket.getInputStream())
+      );
+!!!128642.java!!!	run() : void
+    try {
+      msg = in.readLine();
+      //tant que le client est connecté
+      while (msg != null) {
+        System.out.println("Client : " + msg);
+        //envoyer un message au client
+        serveur.sendToAll(msg);
+        out.flush();
+        msg = in.readLine();
+      }
+      //sortir de la boucle si le client a déconecté
+      System.out.println("Client déconecté");
+      //fermer le flux et la session socket
+      out.close();
+      clientSocket.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
