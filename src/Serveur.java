@@ -1,44 +1,48 @@
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class Serveur {
+  private ServerSocket serveurSocket;
+  private boolean quit = false;
+  private final List<Session> clients;
 
-  public static void main(String[] test) {
-    final ServerSocket serveurSocket;
-    final BufferedReader in;
-    final PrintWriter out;
-    final Scanner sc = new Scanner(System.in);
-    final boolean quit = false;
-    final List<Socket> clients = new ArrayList<Socket>();
-
+  public Serveur(int port) {
+    this.clients = new ArrayList<>();
     try {
-      serveurSocket = new ServerSocket(5001);
+      serveurSocket = new ServerSocket(port);
       System.out.println("Serveur démarré");
-
-      // On cherche à se connécter en permanance a un nouveau client
-      while (!quit) {
-        clients.add(serveurSocket.accept());
-        // Quand un client se connecte on l'ajoute a la liste des clients
-        System.out.println("Client connecté");
-
-        ServeurEcouter recevoir = new ServeurEcouter(
-            clients.get(clients.size() - 1));
-        recevoir.start();
-      }
     } catch (IOException e) {
-      e.printStackTrace();
+      System.out.println("Erreur lors de la création du serveur");
     }
   }
 
-  public List<Socket> getClients() {
+  public void sendAll(String message) {
+    for (Session client : clients) {
+      client.send(message);
+    }
+  }
+
+  public void launch() {
+    while (!quit) {
+      try {
+        clients.add(new Session(serveurSocket.accept(), this));
+        System.out.println("Client connecté");
+        
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+  public List<Session> getClients() {
     return this.clients;
   }
 
+  public static void main(String[] test) {
+    Serveur serveur = new Serveur(5000);
+    serveur.launch();
+  }
 }
