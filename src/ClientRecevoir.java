@@ -13,10 +13,16 @@ public class ClientRecevoir extends Thread {
 
   public ClientRecevoir(Socket clientSocket) throws IOException {
     this.clientSocket = clientSocket;
-    new Scanner(System.in);
     out = new PrintWriter(clientSocket.getOutputStream());
-    in =
-      new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+    in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+  }
+
+  public String getMsg() {
+    return msg;
+  }
+
+  public void clearMsg() {
+    this.msg = null;
   }
 
   @Override
@@ -24,7 +30,7 @@ public class ClientRecevoir extends Thread {
     try {
       msg = in.readLine();
       while (msg != null) {
-        System.out.println("Client1 : " + msg);
+        System.out.println(msg);
         msg = in.readLine();
       }
       System.out.println("Serveur déconecté");

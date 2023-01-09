@@ -5,18 +5,45 @@ import java.util.Scanner;
 public class Client {
   private Socket clientSocket;
   private String nom;
-    
-  public Client(String ip, int port) {
-     try {
-      clientSocket = new Socket(ip, port);
-      ClientEnvoyer envoyer = new ClientEnvoyer(clientSocket);
-      ClientRecevoir recevoir = new ClientRecevoir(clientSocket);
-      // demander le nom de la personne et afficher vous êtes connecté en tant que ...
-      Scanner sc = new Scanner(System.in);
+  private ClientEnvoyer envoyer;
+  private ClientRecevoir recevoir;
+  final Scanner sc = new Scanner(System.in);
+
+  public String getNom() {
+    return this.nom;
+
+  }
+
+  public Socket getClientSocket() {
+    return clientSocket;
+  }
+
+  /**
+   * Gère la phase d'envoie et validation du nom
+   */
+  public void attribuerNom() {
+    while (recevoir.getMsg() != "accepte") {
+      if (recevoir.getMsg() != null) {
+        recevoir.clearMsg();
+      }
       System.out.println("Entrez votre nom : ");
-      String nomEntre = sc.nextLine();
-      this.nom = nomEntre;
-      System.out.println("Vous êtes connecté en tant que " + this.nom);
+      this.nom = sc.nextLine();
+      envoyer.envoieNom(nom);
+      while (recevoir.getMsg() != null) {
+      }
+      System.out.println(recevoir.getMsg());
+    }
+    System.out.println("Vous êtes connecté en tant que " + this.nom);
+  }
+
+  public Client(String ip, int port) {
+    try {
+      clientSocket = new Socket(ip, port);
+      this.envoyer = new ClientEnvoyer(this);
+      this.recevoir = new ClientRecevoir(clientSocket);
+      // demander le nom de la personne et afficher vous êtes connecté en tant que ...
+      this.attribuerNom();
+
       // On lance les threads
       envoyer.start();
       recevoir.start();
@@ -25,9 +52,8 @@ public class Client {
     }
   }
 
-  
   public static void main(String[] args) {
     Client client = new Client("localhost", 5000);
-   
+
   }
 }

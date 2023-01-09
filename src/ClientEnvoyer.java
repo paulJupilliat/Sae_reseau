@@ -12,18 +12,34 @@ public class ClientEnvoyer extends Thread {
   private String msg;
   private final Scanner sc;
   private final PrintWriter out;
-  public ClientEnvoyer(Socket clientSocket) throws IOException {
+  private Client client;
+
+  public ClientEnvoyer(Client client) throws IOException {
     sc = new Scanner(System.in);
-    out = new PrintWriter(clientSocket.getOutputStream());
-    new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+    this.client = client;
+    out = new PrintWriter(client.getClientSocket().getOutputStream());
+    new BufferedReader(new InputStreamReader(client.getClientSocket().getInputStream()));
+  }
+
+  /**
+   * Permet d'envoyer un message au serveur
+   * @param msg le message à envoyer
+   */
+  public void envoieMsg(String msg) {
+    msg = sc.nextLine();
+    out.println(this.client.getNom() + " : " + msg);
+    out.flush();
+  }
+
+  public void envoieNom(String nom){
+    out.println("#nom : " + nom);
+    out.flush();
   }
 
   @Override
   public void run() {
     while (true) {
-      msg = sc.nextLine();
-      out.println(msg);
-      out.flush();
+      this.envoieMsg(msg);
     }
   }
 }

@@ -33,9 +33,12 @@ public class ServeurEcouter extends Thread {
       System.out.println(msg);
       //tant que le client est connecté
       while (!msg.equals("quit")) {
-        System.out.println("Client : " + msg);
+        if(msg.contains("#nom")){
+          serveur.sendTo("#nom : " + serveur.add_nom(msg), clientSocket);
+        }
+        System.out.println(msg);
         //envoie a tous les clients
-        serveur.sendAll(msg);
+        serveur.sendAll(msg, clientSocket);
         msg = in.readLine();
       }
 

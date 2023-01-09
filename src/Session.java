@@ -5,6 +5,10 @@ public class Session {
   private Serveur serveur;
   ServeurEcouter serveurEcouter;
 
+  public Socket getSocket() {
+      return socket;
+  }
+  
   public Session(Socket socket, Serveur serveur) {
     try {
       this.socket = socket;
