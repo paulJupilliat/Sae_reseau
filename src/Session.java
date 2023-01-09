@@ -15,6 +15,9 @@ public class Session {
       e.printStackTrace();
     }
   }
+  public Socket getSocket() {
+      return socket;
+  }
 
   public void send(String msg) {
     this.serveurEcouter.send(msg);

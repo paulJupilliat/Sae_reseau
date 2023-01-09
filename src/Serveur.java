@@ -20,9 +20,17 @@ public class Serveur {
     
   }
 
-  public void sendAll(String message) {
+ /**
+   * Envoie un message à toutes les sockets de ce serveur sauf à l'envoyeur
+   * 
+   * @param message {String} Le message à envoyer
+   * @param envoyeur {Socket} Le socket de l'envoyeur
+   */ 
+  public void sendAll(String message, Socket envoyeur) {
     for (Session client : clients) {
-      client.send(message);
+      if (!client.getSocket().equals(envoyeur)) {
+        client.send(message);
+      }
     }
   }
 
