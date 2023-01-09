@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Serveur {
+  private List<Salon> salons;
   private ServerSocket serveurSocket;
   private boolean quit = false;
   private final List<Session> clients;

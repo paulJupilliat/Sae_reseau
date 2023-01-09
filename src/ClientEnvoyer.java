@@ -8,7 +8,7 @@ import java.util.Scanner;
 /*
  * Permet d'envoyer les messages du serveur
  */
-public class ClientEnvoyer extends Thread {
+public class ClientEnvoyer extends Client implements Runnable {
   private String msg;
   private final Scanner sc;
   private final PrintWriter out;

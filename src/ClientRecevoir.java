@@ -5,7 +5,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class ClientRecevoir extends Thread {
+public class ClientRecevoir implements Runnable {
+  
   private String msg;
   private final Socket clientSocket;
   private final PrintWriter out;
@@ -26,6 +27,9 @@ public class ClientRecevoir extends Thread {
       while (msg != null) {
         System.out.println(msg);
         msg = in.readLine();
+        if(msg.equals("salons")){
+          System.out.println("Voici la liste des salons : " + this.getSalons());
+        }
       }
       System.out.println("Serveur déconecté");
       out.close();
