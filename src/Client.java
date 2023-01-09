@@ -9,7 +9,7 @@ public class Client {
   public Client(String ip, int port) {
      try {
       clientSocket = new Socket(ip, port);
-      ClientEnvoyer envoyer = new ClientEnvoyer(clientSocket);
+      ClientEnvoyer envoyer = new ClientEnvoyer(this);
       ClientRecevoir recevoir = new ClientRecevoir(clientSocket);
       // demander le nom de la personne et afficher vous êtes connecté en tant que ...
       Scanner sc = new Scanner(System.in);
@@ -23,6 +23,13 @@ public class Client {
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+  public String getNom() {
+      return nom;
+  }
+
+  public Socket getClientSocket() {
+      return clientSocket;
   }
 
   

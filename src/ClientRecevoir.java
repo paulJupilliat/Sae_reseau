@@ -24,7 +24,7 @@ public class ClientRecevoir extends Thread {
     try {
       msg = in.readLine();
       while (msg != null) {
-        System.out.println("Client1 : " + msg);
+        System.out.println(msg);
         msg = in.readLine();
       }
       System.out.println("Serveur déconecté");
