@@ -1,6 +1,6 @@
-import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
+import java.io.IOException;
 
 public class Client {
   private Socket clientSocket;
@@ -11,11 +11,12 @@ public class Client {
       clientSocket = new Socket(ip, port);
       ClientEnvoyer envoyer = new ClientEnvoyer(this);
       ClientRecevoir recevoir = new ClientRecevoir(clientSocket);
-      // demander le nom de la personne et afficher vous êtes connecté en tant que ...
-      Scanner sc = new Scanner(System.in);
-      System.out.println("Entrez votre nom : ");
-      String nomEntre = sc.nextLine();
-      this.nom = nomEntre;
+      try (// demander le nom de la personne et afficher vous êtes connecté en tant que ...
+      Scanner sc = new Scanner(System.in)) {
+        System.out.println("Entrez votre nom : ");
+        String nomEntre = sc.nextLine();
+        this.nom = nomEntre;
+      }
       System.out.println("Vous êtes connecté en tant que " + this.nom);
       // On lance les threads
       envoyer.start();

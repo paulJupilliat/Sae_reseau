@@ -34,7 +34,8 @@ public class ServeurEcouter extends Thread {
       msg = in.readLine();
       System.out.println(msg);
       //tant que le client est connecté
-      while (!msg.contains("/quit")) {
+      while (!msg.matches(".* : /quit")) {
+        //afficher le message
         System.out.println(msg);
         //envoie a tous les clients
         serveur.sendAll(msg, clientSocket);
