@@ -5,6 +5,7 @@ import java.util.Scanner;
 public class Client {
   private Socket clientSocket;
   private String nom;
+  private String salonActuel;
     
   public Client(String ip, int port) {
      try {
@@ -29,7 +30,11 @@ public class Client {
   }
 
   public Socket getClientSocket() {
-      return clientSocket;
+    return clientSocket;
+  }
+  
+  public String getSalonActuel() {
+      return salonActuel;
   }
 
   

@@ -25,7 +25,7 @@ public class ClientEnvoyer extends Thread {
   public void run() {
     while (true) {
       msg = sc.nextLine();
-      out.println(this.client.getNom() + " : " + msg);
+      out.println("salon{" + this.client.getSalonActuel() + "} " + this.client.getNom() + " : " + msg);
       out.flush();
     }
   }

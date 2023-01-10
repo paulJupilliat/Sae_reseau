@@ -23,22 +23,59 @@ public class ServeurEcouter extends Thread {
       );
   }
 
-  public void send(String msg) {
-    this.out.println(msg);
-    this.out.flush();
-  }
-
   @Override
   public void run() {
     try {
       msg = in.readLine();
       System.out.println(msg);
       //tant que le client est connecté
-      while (!msg.contains("/quit")) {
-        System.out.println(msg);
-        //envoie a tous les clients
-        serveur.sendAll(msg, clientSocket);
-        msg = in.readLine();
+      while (!msg.matches(".* : /quit")) {
+        // commande pour rejoindre un salon
+        if (msg.matches(".* : /salon .*")) {
+          // récupération du nom du salon
+          String salon = msg.substring(msg.indexOf("/salon ") + 7);
+          // enlever cette partie du message
+          msg = msg.substring(0, msg.indexOf("/salon "));
+          // envoi du message de changement de salon
+          serveur.sendAll(
+              "salon{" + salon + "} " + msg + " a rejoint le salon " + salon,
+              clientSocket);
+          // envoi du message de changement de salon
+          serveur.sendAll(
+              "salon{" + salon + "} " + msg + " a quitté le salon " + salon,
+              clientSocket);
+        }
+        // si demande la liste de tous les salons
+        else if (msg.matches(".* : /salons")) {
+          // envoi de la liste des salons
+          serveur.sendAll("salons{" + serveur.getSalons() + "}", clientSocket);
+        }
+        //  si veux creer un salon
+        else if (msg.matches(".* : /createsalon *")) {
+          // récupération du nom du salon
+          String salon = msg.substring(msg.indexOf("/createsalon ") + 13);
+          // enlever cette partie du message
+          msg = msg.substring(0, msg.indexOf("/createsalon "));
+          // envoi du message de changement de salon
+          serveur.sendAll(
+              "salon{" + salon + "} " + msg + " a rejoint le salon " + salon,
+              clientSocket);
+          // envoi du message de changement de salon
+          serveur.sendAll(
+              "salon{" + salon + "} " + msg + " a quitté le salon " + salon,
+              clientSocket);
+        }
+        // si le message n'est pas une commande
+        else {
+          // récupération des infos du salon
+          String salon = msg.substring(msg.indexOf("{") + 1, msg.indexOf("}"));
+          // enlever cette partie du message
+          msg = msg.substring(msg.indexOf("}") + 1);
+          System.out.println(msg);
+          //envoie a tous les clients
+          serveur.sendAll(msg, clientSocket);
+          msg = in.readLine();
+        }
       }
       //sortir de la boucle si le client a déconecté
       System.out.println("Client déconecté");
