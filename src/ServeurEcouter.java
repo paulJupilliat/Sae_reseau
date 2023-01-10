@@ -17,10 +17,12 @@ public class ServeurEcouter extends Thread {
     this.clientSocket = socket;
     this.serveur = serveur;
     this.out = new PrintWriter(this.clientSocket.getOutputStream());
-    this.in = new BufferedReader(
-        new InputStreamReader(this.clientSocket.getInputStream()));
+    this.in =
+      new BufferedReader(
+        new InputStreamReader(this.clientSocket.getInputStream())
+      );
   }
-  
+
   public void send(String msg) {
     this.out.println(msg);
     this.out.flush();
@@ -32,13 +34,12 @@ public class ServeurEcouter extends Thread {
       msg = in.readLine();
       System.out.println(msg);
       //tant que le client est connecté
-      while (!msg.equals("quit")) {
+      while (!msg.contains("/quit")) {
         System.out.println(msg);
         //envoie a tous les clients
         serveur.sendAll(msg, clientSocket);
         msg = in.readLine();
       }
-
       //sortir de la boucle si le client a déconecté
       System.out.println("Client déconecté");
       //fermer le flux et la session socket

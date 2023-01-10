@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.text.BreakIterator;
 import java.util.Scanner;
 
 public class ClientRecevoir extends Thread {
@@ -30,6 +31,7 @@ public class ClientRecevoir extends Thread {
       System.out.println("Serveur déconecté");
       out.close();
       clientSocket.close();
+      System.exit(1);
     } catch (IOException e) {
       e.printStackTrace();
     }
