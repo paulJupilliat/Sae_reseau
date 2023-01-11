@@ -1,31 +1,25 @@
 import java.net.Socket;
 
 public class Session {
-    private final ServeurEcouter recevoir;
-    private final ServeurEnvoyer envoyer;
-    private String nom;
-    private final Socket clSocket;
+  private Socket socket;
+  private Serveur serveur;
+  private ServeurEcouter serveurEcouter;
 
-    public Session(String nom, Socket clSocket) {
-        this.recevoir = null;
-        this.envoyer = null;
-        this.nom = nom;
-        this.clSocket = clSocket;
-        
+  public Session(Socket socket, Serveur serveur) {
+    try {
+      this.socket = socket;
+      this.serveur = serveur;
+      this.serveurEcouter = new ServeurEcouter(socket, serveur);
+      this.serveurEcouter.start();
+    } catch (Exception e) {
+      e.printStackTrace();
     }
+  }
+  public Socket getSocket() {
+      return socket;
+  }
 
-    public Session(ServeurEcouter recevoir, ServeurEnvoyer envoyer, String nom, Socket clSocket) {
-        this.recevoir = recevoir;
-        this.envoyer = envoyer;
-        this.nom = nom;
-        this.clSocket = clSocket;
-    }
-
-    public ServeurEcouter getRecevoir() {
-        return recevoir;
-    }
-
-    public ServeurEnvoyer getEnvoyer() {
-        return envoyer;
-    }
+  public void send(String msg) {
+    this.serveur.sendAll(msg, socket, null);
+  }
 }

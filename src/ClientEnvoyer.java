@@ -12,16 +12,20 @@ public class ClientEnvoyer extends Thread {
   private String msg;
   private final Scanner sc;
   private final PrintWriter out;
-  public ClientEnvoyer(Socket clientSocket) throws IOException {
+  private Client client;
+
+  public ClientEnvoyer(Client client ) throws IOException {
+    this.client = client;
     sc = new Scanner(System.in);
-    out = new PrintWriter(clientSocket.getOutputStream());
+    out = new PrintWriter(client.getClientSocket().getOutputStream());
+    new BufferedReader(new InputStreamReader(client.getClientSocket().getInputStream()));
   }
 
   @Override
   public void run() {
     while (true) {
       msg = sc.nextLine();
-      out.println(msg);
+      out.println("salon{" + this.client.getSalonActuel() + "} " + this.client.getNom() + " : " + msg);
       out.flush();
     }
   }

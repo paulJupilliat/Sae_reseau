@@ -1,32 +1,53 @@
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
+import java.util.Scanner;
 
 /**
  * Permet de creer un client qui peut envoyer et recevoir des messages
  * 
  */
 public class Client {
+  private Socket clientSocket;
   private String nom;
-  private final Socket clSocket;
-  private ClientEnvoyer envoyer;
-  private ClientRecevoir recevoir;
+  private String salonActuel;
+    
+  public Client(String ip, int port) {
+     try {
+      clientSocket = new Socket(ip, port);
+      ClientEnvoyer envoyer = new ClientEnvoyer(this);
+      ClientRecevoir recevoir = new ClientRecevoir(this);
+      // demander le nom de la personne et afficher vous êtes connecté en tant que ...
+      Scanner sc = new Scanner(System.in);
+      System.out.println("Entrez votre nom : ");
+      String nomEntre = sc.nextLine();
+      this.nom = nomEntre;
+      System.out.println("Vous êtes connecté en tant que " + this.nom);
+      // On lance les threads
+      envoyer.start();
+      recevoir.start();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+  public String getNom() {
+      return nom;
+  }
 
-  public Client(Socket clSocket) {
-    this.clSocket = clSocket;
+  public Socket getClientSocket() {
+    return clientSocket;
   }
   
-  /**
-   * Creer les threads pour que le client puisse envoyer et recevoir des messages
-   */
-  public void start() {
-    try{
-      this.envoyer = new ClientEnvoyer(this.clSocket);
-      this.recevoir = new ClientRecevoir(this.clSocket);
-      this.envoyer.start();
-      this.recevoir.start();
-    } catch (IOException e) {
-      System.err.println("Erreur lors de la connexion : " + e.getMessage());
-    }
+  public String getSalonActuel() {
+    return salonActuel;
+  }
+  
+  public void setSalonActuel(String salonActuel) {
+      this.salonActuel = salonActuel;
+  }
+
+  
+  public static void main(String[] args) {
+    Client client = new Client("localhost", 5001);
+   
   }
 }

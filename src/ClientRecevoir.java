@@ -3,16 +3,19 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.text.BreakIterator;
 import java.util.Scanner;
 
 public class ClientRecevoir extends Thread {
+  private Client client;
   private String msg;
   private final Socket clientSocket;
   private final PrintWriter out;
   private final BufferedReader in;
 
-  public ClientRecevoir(Socket clientSocket) throws IOException {
-    this.clientSocket = clientSocket;
+  public ClientRecevoir(Client client) throws IOException {
+    this.clientSocket = client.getClientSocket();
+    this.client = client;
     new Scanner(System.in);
     out = new PrintWriter(clientSocket.getOutputStream());
     in =
@@ -24,14 +27,20 @@ public class ClientRecevoir extends Thread {
     try {
       msg = in.readLine();
       while (msg != null) {
-        System.out.println("Serveur : " + msg);
+        if (msg.matches("serveur : Vous avez rejoint le salon #.*")) {
+          this.client.setSalonActuel(msg.substring(msg.indexOf("#")+1, msg.length()));
+        }
+        System.out.println(msg);
         msg = in.readLine();
       }
       System.out.println("Serveur déconecté");
       out.close();
       clientSocket.close();
+      System.exit(1);
     } catch (IOException e) {
-      e.printStackTrace();
+      System.out.println("Serveur déconecté");
+      out.close();
+      System.exit(1);
     }
   }
 }

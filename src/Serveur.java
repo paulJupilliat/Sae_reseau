@@ -2,54 +2,147 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
 
 public class Serveur {
   private ServerSocket serveurSocket;
-  private final Scanner sc;
   private boolean quit = false;
-  private List<Session> clients;
+  private final List<Session> clients;
+  private List<Salon> salons;
 
   public Serveur(int port) {
+    this.clients = new ArrayList<>();
+    Salon general = new Salon(
+      "General",
+      "Salon général",
+      100,
+      0,
+      this
+    );
+    this.salons = new ArrayList<>(Arrays.asList(general));
     try {
-      this.serveurSocket = new ServerSocket(port);
-    } catch (IOException e1) {
-      System.err.println("Erreur lors de la connexion : " + e1.getMessage());
-    }
-    System.out.println("Serveur démarré sur le port: " + port);
-    this.clients = new ArrayList<Session>();
-    this.sc = new Scanner(System.in);
-  }
-
-  public void start() {
-    try {
-      while (this.quit == false) {
-        Socket client = this.serveurSocket.accept();
-        String nom = this.sc.nextLine();
-        this.clients.add(new Session(new ServeurEcouter(client, this), new ServeurEnvoyer(client, this), nom, client));
-        this.clients.get().getEnvoyer().start();
-        this.clients.get(client).getRecevoir().start();
-        System.out.println("Client connecté");
-      }
+      serveurSocket = new ServerSocket(port);
+      System.out.println("Serveur démarré");
     } catch (IOException e) {
-      System.err.println("Erreur lors de la connexion : " + e.getMessage());
+      System.out.println("Erreur lors de la création du serveur");
     }
-  }
-  
-  public void stop() {
-    this.quit = true;
   }
 
   /**
-   * Envoie un message à tous les clients
-   * @param msg (String) le message à envoyer
+   * Envoie un message à toutes les sockets de ce serveur sauf à l'envoyeur
+   *
+   * @param message {String} Le message à envoyer
+   * @param envoyeur {Socket} Le socket de l'envoyeur
    */
-  public void sendToAll(String msg) {
-    for (Socket client : this.clients.keySet()) {
-      this.clients.get(client).getEnvoyer().send(msg);
+  public void sendAll(String message, Socket envoyeur, String salon) {
+    ServeurEnvoie serveurEnvoie = new ServeurEnvoie(
+      this,
+      message,
+      envoyeur,
+      salon,
+      "all"
+    );
+    serveurEnvoie.start();
+  }
+
+  /**
+   * Envoie un message à un socket de ce serveur
+   *
+   * @param message {String} Le message à envoyer
+   * @param envoyeur {Socket} Le socket de l'envoyeur
+   */
+  public void sendInfo(String msg, Socket socket) {
+    ServeurEnvoie serveurEnvoie = new ServeurEnvoie(
+      this,
+      msg,
+      socket,
+      null,
+      "info"
+    );
+    serveurEnvoie.start();
+  }
+
+  public void launch() {
+    while (!quit) {
+      try {
+        clients.add(new Session(serveurSocket.accept(), this));
+        System.out.println("Client connecté");
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
+  }
+
+  public List<Session> getClients() {
+    return this.clients;
+  }
+
+  public List<Salon> getSalons() {
+    return salons;
+  }
+
+  public void createSalon(String nom, Socket client) {
+    Salon newSalon = new Salon(
+      nom,
+      nom,
+      10,
+      0,
+      this
+    );
+    // Si le nom n'est pas déjà pris
+    if (this.getSalon(newSalon.getNom()) == null) {
+      this.salons.add(newSalon);
+      this.changeSalon(client, null, nom);
+      this.sendInfo("Salon créé", client);
+    } else {
+      this.sendInfo("Le nom du salon est déjà pris", client);
+    }
+  }
+
+  public String getSalonsString() {
+    String res = "";
+    for (Salon salon : this.salons) {
+      res += "| " + salon.getNom() + " ";
+    }
+    return res + "|";
+  }
+
+  /**
+   * Récupère un *salon à partir d'un nom
+   * @param salon Le nom du salon recherché
+   * @return Le salon recherché si il existe
+   */
+  public Salon getSalon(String salon) {
+    for (Salon salonRes : this.salons) {
+      if (salonRes.getNom().equals(salon)) {
+        return salonRes;
+      }
+    }
+    return null;
+  }
+
+  public void changeSalon(Socket client, String oldSalon, String newSalon) {
+    ServeurGestSalon ajouteur = new ServeurGestSalon(
+      newSalon,
+      oldSalon,
+      client,
+      this
+    );
+    ajouteur.start();
+  }
+
+  public Session getSession(Socket client) {
+    for (Session session : this.clients) {
+      if (session.getSocket() == client) {
+        return session;
+      }
+    }
+    return null;
+  }
+
+  public static void main(String[] test) {
+    Serveur serveur = new Serveur(5001);
+    serveur.launch();
   }
 }
