@@ -40,13 +40,25 @@ public class Serveur {
     ServeurEnvoie serveurEnvoie = new ServeurEnvoie(
       this.clients,
       message,
-      envoyeur
+      envoyeur,
+      "all"
     );
     serveurEnvoie.start();
   }
 
-  public void sendTo(String msg, Socket socket) {
-    ServeurEnvoie serveurEnvoie = new ServeurEnvoie(this.clients, msg, socket);
+  /**
+   * Envoie un message à un socket de ce serveur
+   *
+   * @param message {String} Le message à envoyer
+   * @param envoyeur {Socket} Le socket de l'envoyeur
+   */
+  public void sendInfo(String msg, Socket socket) {
+    ServeurEnvoie serveurEnvoie = new ServeurEnvoie(
+      this.clients,
+      msg,
+      socket,
+      "info"
+    );
     serveurEnvoie.start();
   }
 
@@ -69,9 +81,36 @@ public class Serveur {
     return salons;
   }
 
-  public boolean changeSalon(Socket client, String oldSalon, String newSalon) {
-    // To do
-    return true;
+  public String getSalonsString() {
+    String res = "";
+    for (Salon salon : this.salons) {
+      res += salon.getNom() + " ";
+    }
+    return res;
+  }
+
+  /**
+   * Récupère un *salon à partir d'un nom
+   * @param salon Le nom du salon recherché
+   * @return Le salon recherché si il existe
+   */
+  public Salon getSalon(String salon) {
+    for (Salon salonRes : this.salons) {
+      if (salonRes.getNom().equals(salon)) {
+        return salonRes;
+      }
+    }
+    return null;
+  }
+
+  public void changeSalon(Socket client, String oldSalon, String newSalon) {
+    ServeurGestSalon ajouteur = new ServeurGestSalon(
+      newSalon,
+      oldSalon,
+      client,
+      this
+    );
+    ajouteur.start();
   }
 
   public Session getSession(Socket client) {

@@ -20,6 +20,6 @@ public class Session {
   }
 
   public void send(String msg) {
-    this.serveur.sendTo(msg, socket);
+    this.serveur.sendAll(msg, socket);
   }
 }

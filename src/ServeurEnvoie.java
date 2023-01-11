@@ -7,6 +7,7 @@ public class ServeurEnvoie extends Thread {
   private List<Session> clients;
   private String message;
   private Socket envoyeur;
+  private String all;
 
   /**
    * Constructeur de la classe ServeurEnvoie si il veut envoyer le message à tous le monde
@@ -14,31 +15,64 @@ public class ServeurEnvoie extends Thread {
    * @param clients {List<Session>} La liste des clients connectés
    * @param message {String} Le message à envoyer
    * @param envoyeur {Socket} Le socket de l'envoyeur
+   * @param all {Strong} Si il faut envoyer à tous "all", à l'envoyeur "info", à un socket précis "to"
    */
-  public ServeurEnvoie(List<Session> clients, String message, Socket envoyeur) {
+  public ServeurEnvoie(
+    List<Session> clients,
+    String message,
+    Socket envoyeur,
+    String all
+  ) {
     this.clients = clients;
     this.message = message;
     this.envoyeur = envoyeur;
+    this.all = all;
   }
 
   @Override
   public void run() {
     if (message != null) {
-      // Envoi du message à tous les sockets
-      for (Session sessionCl : clients) {
-        if (sessionCl.getSocket() != envoyeur) {
-          Socket client = sessionCl.getSocket();
-          try {
-            PrintWriter out = new PrintWriter(client.getOutputStream());
-            out.println(message);
-            out.flush();
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
-        }
+      if (this.all.equals("all")) {
+        this.sendAll();
+      }
+      if (this.all.equals("info")) {
+        this.sendInfo();
       }
       // Réinitialisation de la variable de message
       message = null;
+    }
+  }
+
+  /**
+   * Envoie le message à l'envoyeur
+   */
+  private void sendInfo() {
+    // Envoi du message à l'envoyeur
+    try {
+      PrintWriter out = new PrintWriter(envoyeur.getOutputStream());
+      out.println(message);
+      out.flush();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Envoie le message à tous les sockets de ce serveur sauf à l'envoyeur
+   */
+  private void sendAll() {
+    // Envoi du message à tous les sockets
+    for (Session sessionCl : clients) {
+      if (sessionCl.getSocket() != envoyeur) {
+        Socket client = sessionCl.getSocket();
+        try {
+          PrintWriter out = new PrintWriter(client.getOutputStream());
+          out.println(message);
+          out.flush();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
     }
   }
 }
