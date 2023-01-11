@@ -3,7 +3,7 @@ import java.net.Socket;
 public class Session {
   private Socket socket;
   private Serveur serveur;
-  ServeurEcouter serveurEcouter;
+  private ServeurEcouter serveurEcouter;
 
   public Session(Socket socket, Serveur serveur) {
     try {
@@ -20,6 +20,6 @@ public class Session {
   }
 
   public void send(String msg) {
-    this.serveur.sendAll(msg, socket);
+    this.serveur.sendAll(msg, socket, null);
   }
 }

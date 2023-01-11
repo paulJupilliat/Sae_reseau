@@ -11,7 +11,7 @@ public class Client {
      try {
       clientSocket = new Socket(ip, port);
       ClientEnvoyer envoyer = new ClientEnvoyer(this);
-      ClientRecevoir recevoir = new ClientRecevoir(clientSocket);
+      ClientRecevoir recevoir = new ClientRecevoir(this);
       // demander le nom de la personne et afficher vous êtes connecté en tant que ...
       Scanner sc = new Scanner(System.in);
       System.out.println("Entrez votre nom : ");
@@ -34,12 +34,16 @@ public class Client {
   }
   
   public String getSalonActuel() {
-      return salonActuel;
+    return salonActuel;
+  }
+  
+  public void setSalonActuel(String salonActuel) {
+      this.salonActuel = salonActuel;
   }
 
   
   public static void main(String[] args) {
-    Client client = new Client("localhost", 5000);
+    Client client = new Client("localhost", 5001);
    
   }
 }

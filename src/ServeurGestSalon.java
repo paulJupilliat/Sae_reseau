@@ -51,7 +51,7 @@ public class ServeurGestSalon extends Thread {
     // On veut rejoindre un nouveau salon
     try {
       this.changeSalon();
-      this.sendInfo("Vous avez rejoint le salon " + this.newSalon.getNom());
+      this.sendInfo("serveur : Vous avez rejoint le salon #" + this.newSalon.getNom());
     } catch (ExceptionSalon e) {
       this.sendInfo(e.getMessage());
     }

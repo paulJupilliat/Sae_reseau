@@ -7,13 +7,15 @@ import java.text.BreakIterator;
 import java.util.Scanner;
 
 public class ClientRecevoir extends Thread {
+  private Client client;
   private String msg;
   private final Socket clientSocket;
   private final PrintWriter out;
   private final BufferedReader in;
 
-  public ClientRecevoir(Socket clientSocket) throws IOException {
-    this.clientSocket = clientSocket;
+  public ClientRecevoir(Client client) throws IOException {
+    this.clientSocket = client.getClientSocket();
+    this.client = client;
     new Scanner(System.in);
     out = new PrintWriter(clientSocket.getOutputStream());
     in =
@@ -25,6 +27,9 @@ public class ClientRecevoir extends Thread {
     try {
       msg = in.readLine();
       while (msg != null) {
+        if (msg.matches("serveur : Vous avez rejoint le salon #.*")) {
+          this.client.setSalonActuel(msg.substring(msg.indexOf("#")+1, msg.length()));
+        }
         System.out.println(msg);
         msg = in.readLine();
       }

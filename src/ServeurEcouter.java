@@ -30,7 +30,7 @@ public class ServeurEcouter extends Thread {
   public String getSalon() {
     int startIndex = this.msg.indexOf("salon{") + 1;
     int endIndex = this.msg.indexOf("}", startIndex);
-    return this.msg.substring(startIndex, endIndex);
+    return this.msg.substring(startIndex + 5, endIndex);
   }
 
   /**
@@ -40,24 +40,22 @@ public class ServeurEcouter extends Thread {
    */
   public String getNameSalon(String commande) {
     commande += " ";
-    int startIndex = this.msg.indexOf("/")+1;
+    int startIndex = this.msg.indexOf("/") + 1;
     for (int ind = 0; ind < commande.length(); ind++) {
       if (this.msg.charAt(startIndex + ind) != commande.charAt(ind)) {
-        System.out.println(this.msg.charAt(startIndex + ind));
-        System.out.println(commande.charAt(ind));
         return null;
       }
     }
-    return msg.substring(startIndex+commande.length(), msg.length());
+    return msg.substring(startIndex + commande.length(), msg.length());
   }
 
   @Override
   public void run() {
     try {
-      msg = in.readLine();
-      System.out.println(msg);
+      this.msg = in.readLine();
       //tant que le client est connecté
       while (!msg.matches(".* : /quit")) {
+        System.out.println(this.msg);
         // On recupère le solon du client
         String salonActuel = this.getSalon();
         // si demande la liste de tous les salons
@@ -77,21 +75,20 @@ public class ServeurEcouter extends Thread {
           // récupération du nom du salon
           String salon = this.getNameSalon("createsalon");
           if (salon == null) {
-            this.serveur.sendInfo("Commande invalide", clientSocket);
+            this.serveur.sendInfo(
+                "Commande invalide '/createsalon <nomSalon>'",
+                clientSocket
+              );
           } else {
             this.serveur.createSalon(salon, this.clientSocket);
-            System.out.println("cree");
           }
         }
         // si le message n'est pas une commande
         else {
-          // récupération des infos du salon
-          String salon = msg.substring(msg.indexOf("{") + 1, msg.indexOf("}"));
-          // enlever cette partie du message
+          // enlever la partie salon
           msg = msg.substring(msg.indexOf("}") + 1);
           System.out.println(msg);
-          //envoie a tous les clients
-          serveur.sendAll(msg, clientSocket);
+          this.serveur.sendAll(msg, clientSocket, salonActuel);
         }
         msg = in.readLine();
       }
@@ -101,7 +98,7 @@ public class ServeurEcouter extends Thread {
       out.close();
       clientSocket.close();
     } catch (IOException e) {
-      e.printStackTrace();
+      System.out.println("Un client s'est déconnecté");
     }
   }
 }

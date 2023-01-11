@@ -36,11 +36,12 @@ public class Serveur {
    * @param message {String} Le message à envoyer
    * @param envoyeur {Socket} Le socket de l'envoyeur
    */
-  public void sendAll(String message, Socket envoyeur) {
+  public void sendAll(String message, Socket envoyeur, String salon) {
     ServeurEnvoie serveurEnvoie = new ServeurEnvoie(
-      this.clients,
+      this,
       message,
       envoyeur,
+      salon,
       "all"
     );
     serveurEnvoie.start();
@@ -54,9 +55,10 @@ public class Serveur {
    */
   public void sendInfo(String msg, Socket socket) {
     ServeurEnvoie serveurEnvoie = new ServeurEnvoie(
-      this.clients,
+      this,
       msg,
       socket,
+      null,
       "info"
     );
     serveurEnvoie.start();
@@ -82,7 +84,16 @@ public class Serveur {
   }
 
   public void createSalon(String nom, Socket client) {
-    this.salons.add(new Salon(nom, nom, 10, 0, new ArrayList<>(Arrays.asList(this.getSession(client))), this));
+    this.salons.add(
+        new Salon(
+          nom,
+          nom,
+          10,
+          0,
+          new ArrayList<>(Arrays.asList(this.getSession(client))),
+          this
+        )
+      );
   }
 
   public String getSalonsString() {
@@ -127,7 +138,7 @@ public class Serveur {
   }
 
   public static void main(String[] test) {
-    Serveur serveur = new Serveur(5000);
+    Serveur serveur = new Serveur(5001);
     serveur.launch();
   }
 }

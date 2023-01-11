@@ -8,6 +8,7 @@ public class ServeurEnvoie extends Thread {
   private String message;
   private Socket envoyeur;
   private String all;
+  private Salon salon;
 
   /**
    * Constructeur de la classe ServeurEnvoie si il veut envoyer le message à tous le monde
@@ -18,15 +19,17 @@ public class ServeurEnvoie extends Thread {
    * @param all {Strong} Si il faut envoyer à tous "all", à l'envoyeur "info", à un socket précis "to"
    */
   public ServeurEnvoie(
-    List<Session> clients,
+    Serveur serveur,
     String message,
     Socket envoyeur,
+    String salon,
     String all
   ) {
-    this.clients = clients;
+    this.clients = serveur.getClients();
     this.message = message;
     this.envoyeur = envoyeur;
     this.all = all;
+    this.salon = serveur.getSalon(salon);
   }
 
   @Override
@@ -61,16 +64,15 @@ public class ServeurEnvoie extends Thread {
    * Envoie le message à tous les sockets de ce serveur sauf à l'envoyeur
    */
   private void sendAll() {
-    // Envoi du message à tous les sockets
-    for (Session sessionCl : clients) {
-      if (sessionCl.getSocket() != envoyeur) {
-        Socket client = sessionCl.getSocket();
-        try {
-          PrintWriter out = new PrintWriter(client.getOutputStream());
-          out.println(message);
-          out.flush();
-        } catch (IOException e) {
-          e.printStackTrace();
+    if (this.salon == null) {
+      this.message =
+        "Rejoigné un salon avec la commande '/salon <nomSalon>'\n Pour voir tous les salons '/salons'";
+      this.sendInfo();
+    } else {
+      // Envoi du message à tous les sockets
+      for (Session sessionCl : clients) {
+        if (sessionCl.getSocket() != envoyeur) {
+          this.salon.send(this.message, sessionCl.getSocket());
         }
       }
     }
