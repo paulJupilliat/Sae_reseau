@@ -41,7 +41,7 @@ public class ServeurGestSalon extends Thread {
   @Override
   public void run() {
     // Si les salons n'existent pas
-    if (this.newSalon == null || this.oldSalon == null) {
+    if (this.newSalon == null) {
       try {
         throw new ExceptionSalon("Le salon n'existe pas");
       } catch (ExceptionSalon e) {
@@ -49,15 +49,12 @@ public class ServeurGestSalon extends Thread {
       }
     }
     // On veut rejoindre un nouveau salon
-    if (newSalon != null) {
-        try {
-            this.changeSalon();
-            this.sendInfo("Vous avez rejoint le salon " + this.newSalon.getNom());
-        } catch (ExceptionSalon e) {
-            this.sendInfo(e.getMessage());
-        }
+    try {
+      this.changeSalon();
+      this.sendInfo("Vous avez rejoint le salon " + this.newSalon.getNom());
+    } catch (ExceptionSalon e) {
+      this.sendInfo(e.getMessage());
     }
-    
   }
 
   /**
@@ -65,10 +62,10 @@ public class ServeurGestSalon extends Thread {
    * Si le salon que l'on veut rejoindre est plein, on génère une exception
    */
   private void changeSalon() throws ExceptionSalon {
-      if (newSalon.connexion(this.client)) {
-        if (oldSalon != null) {
-          oldSalon.deco(this.client);
-        }
+    if (newSalon.connexion(this.client)) {
+      if (oldSalon != null) {
+        oldSalon.deco(this.client);
+      }
     } else {
       throw new ExceptionSalon("Le salon est plein");
     }

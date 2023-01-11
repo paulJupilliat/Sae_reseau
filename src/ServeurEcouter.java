@@ -24,15 +24,31 @@ public class ServeurEcouter extends Thread {
   }
 
   /**
-   * Récupére l'ancien salon
+   * Récupére le salon de l'utilisateur
    * @return {String} Le nom de L'ancien salon
    */
-  public String getOldSalon() {
-    // Récupére l'ancien salon
-    int startIndex = this.msg.indexOf("{") + 1;
+  public String getSalon() {
+    int startIndex = this.msg.indexOf("salon{") + 1;
     int endIndex = this.msg.indexOf("}", startIndex);
-    String oldSalon = this.msg.substring(startIndex, endIndex);
-    return oldSalon;
+    return this.msg.substring(startIndex, endIndex);
+  }
+
+  /**
+   * Obtient le salon en paramètre de la commande
+   * @param commande {String} La commande
+   * @return Le nom du salon à rejoindre
+   */
+  public String getNameSalon(String commande) {
+    commande += " ";
+    int startIndex = this.msg.indexOf("/")+1;
+    for (int ind = 0; ind < commande.length(); ind++) {
+      if (this.msg.charAt(startIndex + ind) != commande.charAt(ind)) {
+        System.out.println(this.msg.charAt(startIndex + ind));
+        System.out.println(commande.charAt(ind));
+        return null;
+      }
+    }
+    return msg.substring(startIndex+commande.length(), msg.length());
   }
 
   @Override
@@ -42,6 +58,8 @@ public class ServeurEcouter extends Thread {
       System.out.println(msg);
       //tant que le client est connecté
       while (!msg.matches(".* : /quit")) {
+        // On recupère le solon du client
+        String salonActuel = this.getSalon();
         // si demande la liste de tous les salons
         if (msg.matches(".* : /salons")) {
           // envoi de la liste des salons
@@ -49,19 +67,21 @@ public class ServeurEcouter extends Thread {
         }
         // commande pour rejoindre un salon
         else if (msg.matches(".* : /salon .*")) {
-          // récupération de l'ancien salon
-          String oldSalon = getOldSalon();
-          // récupération du nom du salon
-          String newSalon = msg.substring(msg.indexOf("/salon ") + 7);
+          // récupération du nom du salon voulu qui peut faire au maximum 20 caractères
+          String newSalon = this.getNameSalon("salon");
           // envoi du message de changement de salon
-          this.serveur.changeSalon(clientSocket, oldSalon, newSalon);
+          this.serveur.changeSalon(clientSocket, salonActuel, newSalon);
         }
         //  si veux creer un salon
-        else if (msg.matches(".* : /createsalon *")) {
+        else if (msg.matches(".* : /createsalon .*")) {
           // récupération du nom du salon
-          String salon = msg.substring(msg.indexOf("/createsalon ") + 13);
-          // enlever cette partie du message
-          msg = msg.substring(0, msg.indexOf("/createsalon "));
+          String salon = this.getNameSalon("createsalon");
+          if (salon == null) {
+            this.serveur.sendInfo("Commande invalide", clientSocket);
+          } else {
+            this.serveur.createSalon(salon, this.clientSocket);
+            System.out.println("cree");
+          }
         }
         // si le message n'est pas une commande
         else {

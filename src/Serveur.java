@@ -81,12 +81,16 @@ public class Serveur {
     return salons;
   }
 
+  public void createSalon(String nom, Socket client) {
+    this.salons.add(new Salon(nom, nom, 10, 0, new ArrayList<>(Arrays.asList(this.getSession(client))), this));
+  }
+
   public String getSalonsString() {
     String res = "";
     for (Salon salon : this.salons) {
-      res += salon.getNom() + " ";
+      res += "| " + salon.getNom() + " ";
     }
-    return res;
+    return res + "|";
   }
 
   /**
