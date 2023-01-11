@@ -87,7 +87,6 @@ public class ServeurEcouter extends Thread {
         else {
           // enlever la partie salon
           msg = msg.substring(msg.indexOf("}") + 1);
-          System.out.println(msg);
           this.serveur.sendAll(msg, clientSocket, salonActuel);
         }
         msg = in.readLine();

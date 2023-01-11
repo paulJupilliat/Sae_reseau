@@ -84,16 +84,22 @@ public class Serveur {
   }
 
   public void createSalon(String nom, Socket client) {
-    this.salons.add(
-        new Salon(
-          nom,
-          nom,
-          10,
-          0,
-          new ArrayList<>(Arrays.asList(this.getSession(client))),
-          this
-        )
-      );
+    Salon newSalon = new Salon(
+      nom,
+      nom,
+      10,
+      0,
+      new ArrayList<>(Arrays.asList(this.getSession(client))),
+      this
+    );
+    // Si le nom n'est pas déjà pris
+    if (this.getSalon(newSalon.getNom()) == null) {
+      this.salons.add(newSalon);
+      this.changeSalon(client, null, nom);
+      this.sendInfo("Salon créé", client);
+    } else {
+      this.sendInfo("Le nom du salon est déjà pris", client);
+    }
   }
 
   public String getSalonsString() {
