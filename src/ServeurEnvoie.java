@@ -70,7 +70,7 @@ public class ServeurEnvoie extends Thread {
       this.sendInfo();
     } else {
       // Envoi du message à tous les sockets
-      for (Session sessionCl : clients) {
+      for (Session sessionCl : this.salon.getSessions()) {
         if (sessionCl.getSocket() != envoyeur) {
           this.salon.send(this.message, sessionCl.getSocket());
         }

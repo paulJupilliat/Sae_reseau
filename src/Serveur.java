@@ -18,7 +18,6 @@ public class Serveur {
       "Salon général",
       100,
       0,
-      new ArrayList<>(),
       this
     );
     this.salons = new ArrayList<>(Arrays.asList(general));
@@ -89,7 +88,6 @@ public class Serveur {
       nom,
       10,
       0,
-      new ArrayList<>(Arrays.asList(this.getSession(client))),
       this
     );
     // Si le nom n'est pas déjà pris

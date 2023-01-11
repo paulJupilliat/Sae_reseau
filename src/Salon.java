@@ -1,6 +1,8 @@
-import java.net.Socket;
-import java.util.List;
 import java.io.PrintWriter;
+import java.net.Socket;
+import java.nio.file.FileSystem;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Salon {
   private String nom;
@@ -15,27 +17,33 @@ public class Salon {
     String description,
     int nbMax,
     int nbActuel,
-    List<Session> sessions,
     Serveur serveur
   ) {
     this.nom = nom;
     this.description = description;
     this.nbMax = nbMax;
     this.nbActuel = nbActuel;
-    this.sessions = sessions;
+    this.sessions = new ArrayList<>();
     this.serveur = serveur;
   }
 
   public void sendAll(String msg, Socket destinataire) {
-    for (Session session : sessions) {
-      if (session.getSocket() != destinataire) {
-        session.send(msg);
-      }
-    }
+    ServeurEnvoie envoie = new ServeurEnvoie(
+      this.serveur,
+      msg,
+      destinataire,
+      this.nom,
+      "all"
+    );
+    envoie.start();
   }
 
   public String getNom() {
     return nom;
+  }
+
+  public List<Session> getSessions() {
+    return sessions;
   }
 
   /**
@@ -43,9 +51,9 @@ public class Salon {
    * @param client Le client à déconecter
    */
   public boolean deco(Socket client) {
-    for (Session session : sessions) {
+    for (Session session : this.sessions) {
       if (session.getSocket() == client) {
-        sessions.remove(session);
+        this.sessions.remove(session);
         return true;
       }
     }
@@ -59,19 +67,21 @@ public class Salon {
    */
   public boolean connexion(Socket client) {
     if (nbActuel < nbMax) {
-      sessions.add(this.serveur.getSession(client));
+      this.sessions.add(this.serveur.getSession(client));
       return true;
     }
     return false;
   }
 
   public void send(String message, Socket socket) {
-    try{
-    PrintWriter out = new PrintWriter(socket.getOutputStream());
-    out.println(message);
-    out.flush();
+    try {
+      PrintWriter out = new PrintWriter(socket.getOutputStream());
+      out.println(message);
+      out.flush();
     } catch (Exception e) {
-      System.out.println("Erreur d'envoie de message pour " + socket.toString());
+      System.out.println(
+        "Erreur d'envoie de message pour " + socket.toString()
+      );
     }
   }
 }

@@ -38,7 +38,9 @@ public class ClientRecevoir extends Thread {
       clientSocket.close();
       System.exit(1);
     } catch (IOException e) {
-      e.printStackTrace();
+      System.out.println("Serveur déconecté");
+      out.close();
+      System.exit(1);
     }
   }
 }
