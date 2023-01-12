@@ -3,6 +3,14 @@
 "configurations": [
     {
         "type": "java",
+        "name": "Launch ChatApplication",
+        "request": "launch",
+        "vmArgs": "--module-path C:/Users/benja/Downloads/javafx-sdk-19/lib  --add-modules javafx.controls,javafx.fxml",
+        "mainClass": "launch.ChatApplication",
+        "projectName": "Sae_reseau_d1b04c0c"
+    },
+    {
+        "type": "java",
         "name": "Launch Serveur",
         "request": "launch",
         "mainClass": "Serveur",
