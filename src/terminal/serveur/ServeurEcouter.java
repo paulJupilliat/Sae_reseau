@@ -81,10 +81,19 @@ public class ServeurEcouter extends Thread {
           if (salon == null) {
             this.serveur.sendInfo(
                 "Commande invalide '/createsalon <nomSalon>'",
-                clientSocket
-              );
+                clientSocket);
           } else {
             this.serveur.createSalon(salon, this.clientSocket);
+          }
+        }
+        else if(msg.matches(".* : /deletesalon .*")) {
+          String salon = this.getNameSalon("deletesalon");
+          if (salon == null) {
+            this.serveur.sendInfo(
+                "Commande invalide '/deletesalon <nomSalon>'",
+                clientSocket);
+          } else {
+            this.serveur.deleteSalon(salon, this.clientSocket);
           }
         }
         // si le message n'est pas une commande

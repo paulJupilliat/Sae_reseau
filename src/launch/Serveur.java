@@ -91,12 +91,11 @@ public class Serveur {
 
   public void createSalon(String nom, Socket client) {
     Salon newSalon = new Salon(
-      nom,
-      nom,
-      10,
-      0,
-      this
-    );
+        nom,
+        nom,
+        10,
+        0,
+        this);
     // Si le nom n'est pas déjà pris
     if (this.getSalon(newSalon.getNom()) == null) {
       this.salons.add(newSalon);
@@ -104,6 +103,20 @@ public class Serveur {
       this.sendInfo("Salon créé", client);
     } else {
       this.sendInfo("Le nom du salon est déjà pris", client);
+    }
+  }
+  
+  public void deleteSalon(String nom, Socket client) {
+    Salon salon = this.getSalon(nom);
+    if (salon == null) {
+      this.sendInfo("Le salon n'existe pas", client);
+    } 
+    else if(salon.getNbActuel() > 0) {
+      this.sendInfo("Le salon n'est pas vide", client);
+    }
+    else {
+      this.salons.remove(salon);
+      this.sendInfo("Salon supprimé", client);
     }
   }
 

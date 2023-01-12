@@ -44,6 +44,14 @@ public class Salon {
     return nom;
   }
 
+  /**
+   * Met à jour le nombre actuel de client dans le salon et le donne
+   */
+  public int getNbActuel() {
+    this.nbActuel = this.sessions.size();
+    return nbActuel;
+  }
+
   public List<Session> getSessions() {
     return sessions;
   }
