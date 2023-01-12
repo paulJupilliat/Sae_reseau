@@ -2,24 +2,27 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Client {
+public class ClientIHM {
+  private ChatApplication chatApplication;
   private Socket clientSocket;
   private String nom;
   private String salonActuel;
-  private ClientEnvoyer envoyer;
-  private ClientRecevoir recevoir;
+  private ClientEnvoyerIHM envoyer;
+  private ClientRecevoirIHM recevoir;
     
-  public Client(String ip, int port) {
+  /**
+   * Constructeur pour la version graphique
+   * @param ip l'addresse ip du serveur
+   * @param port le port du serveur
+   * @param nom Le nom de l'utilisateur
+   */
+  public ClientIHM(String ip, int port, String nom, ChatApplication chatApplication) {
     try {
-      clientSocket = new Socket(ip, port);
-      this.envoyer = new ClientEnvoyer(this);
-      this.recevoir = new ClientRecevoir(this);
-      // demander le nom de la personne et afficher vous êtes connecté en tant que ...
-      Scanner sc = new Scanner(System.in);
-      System.out.println("Entrez votre nom : ");
-      String nomEntre = sc.nextLine();
-      this.nom = nomEntre;
-      System.out.println("Vous êtes connecté en tant que " + this.nom);
+      this.chatApplication = chatApplication;
+      this.clientSocket = new Socket(ip, port);
+      this.envoyer = new ClientEnvoyerIHM(this);
+      this.recevoir = new ClientRecevoirIHM(this);
+      this.nom = nom;
       // On lance les threads
       envoyer.start();
       recevoir.start();
@@ -27,7 +30,10 @@ public class Client {
       e.printStackTrace();
     }
   }
-  
+
+  public ChatApplication getChatApplication() {
+      return chatApplication;
+  }
   public String getNom() {
       return nom;
   }
@@ -49,7 +55,7 @@ public class Client {
     this.envoyer.send(message);
   }
 
-  public ClientRecevoir getRecevoir() {
+  public ClientRecevoirIHM getRecevoir() {
       return recevoir;
   }
 

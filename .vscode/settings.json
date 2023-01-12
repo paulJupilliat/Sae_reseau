@@ -1,5 +1,15 @@
 {
     "java.project.sourcePaths": [
-        "src"
-    ]
+        "src",
+    ],
+    "java.project.referencedLibraries": [
+    "c:\\Program Files\\Java\\javafx-sdk-19\\lib\\javafx-swt.jar",
+    "c:\\Program Files\\Java\\javafx-sdk-19\\lib\\javafx.base.jar",
+    "c:\\Program Files\\Java\\javafx-sdk-19\\lib\\javafx.controls.jar",
+    "c:\\Program Files\\Java\\javafx-sdk-19\\lib\\javafx.fxml.jar",
+    "c:\\Program Files\\Java\\javafx-sdk-19\\lib\\javafx.graphics.jar",
+    "c:\\Program Files\\Java\\javafx-sdk-19\\lib\\javafx.media.jar",
+    "c:\\Program Files\\Java\\javafx-sdk-19\\lib\\javafx.swing.jar",
+    "c:\\Program Files\\Java\\javafx-sdk-19\\lib\\javafx.web.jar"
+    ],
 }

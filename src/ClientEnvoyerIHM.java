@@ -8,13 +8,13 @@ import java.util.Scanner;
 /*
  * Permet d'envoyer les messages du serveur
  */
-public class ClientEnvoyer extends Thread {
+public class ClientEnvoyerIHM extends Thread {
   private String msg;
   private final Scanner sc;
   private final PrintWriter out;
-  private Client client;
+  private ClientIHM client;
 
-  public ClientEnvoyer(Client client) throws IOException {
+  public ClientEnvoyerIHM(ClientIHM client) throws IOException {
     this.client = client;
     sc = new Scanner(System.in);
     out = new PrintWriter(client.getClientSocket().getOutputStream());
