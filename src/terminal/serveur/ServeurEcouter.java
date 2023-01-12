@@ -86,7 +86,8 @@ public class ServeurEcouter extends Thread {
             this.serveur.createSalon(salon, this.clientSocket);
           }
         }
-        else if(msg.matches(".* : /deletesalon .*")) {
+        // commande pour supprimer un salon
+        else if (msg.matches(".* : /deletesalon .*")) {
           String salon = this.getNameSalon("deletesalon");
           if (salon == null) {
             this.serveur.sendInfo(
@@ -96,6 +97,7 @@ public class ServeurEcouter extends Thread {
             this.serveur.deleteSalon(salon, this.clientSocket);
           }
         }
+        // salon pour générer le nom
         // si le message n'est pas une commande
         else {
           // enlever la partie salon

@@ -6,7 +6,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import terminal.serveur.Salon;
 import terminal.serveur.ServeurEnvoie;
 import terminal.serveur.ServeurGestSalon;
@@ -20,14 +19,9 @@ public class Serveur {
 
   public Serveur(int port) {
     this.clients = new ArrayList<>();
-    Salon general = new Salon(
-      "General",
-      "Salon général",
-      100,
-      0,
-      this
-    );
-    this.salons = new ArrayList<>(Arrays.asList(general));
+    Salon general = new Salon("General", "Salon général", 100, 0, this);
+    Salon config = new Salon("Config", "Salon de configuration", 100, 0, this);
+    this.salons = new ArrayList<>(Arrays.asList(config, general));
     try {
       serveurSocket = new ServerSocket(port);
       System.out.println("Serveur démarré");
@@ -90,36 +84,31 @@ public class Serveur {
   }
 
   public void createSalon(String nom, Socket client) {
-    Salon newSalon = new Salon(
-        nom,
-        nom,
-        10,
-        0,
-        this);
-    // Si le nom n'est pas déjà pris
-    if (this.getSalon(newSalon.getNom()) == null) {
-      this.salons.add(newSalon);
-      this.changeSalon(client, null, nom);
-      this.sendInfo("Salon créé", client);
-    } else {
-      this.sendInfo("Le nom du salon est déjà pris", client);
-    }
-  }
-  
-  public void deleteSalon(String nom, Socket client) {
-    Salon salon = this.getSalon(nom);
-    if (salon == null) {
-      this.sendInfo("Le salon n'existe pas", client);
-    } 
-    else if(salon.getNbActuel() > 0) {
-      this.sendInfo("Le salon n'est pas vide", client);
-    }
-    else {
-      this.salons.remove(salon);
-      this.sendInfo("Salon supprimé", client);
-    }
+    ServeurGestSalon creation = new ServeurGestSalon(
+      nom,
+      nom,
+      client,
+      this,
+      "create"
+    );
+    creation.start();
   }
 
+  public void deleteSalon(String nom, Socket client) {
+    ServeurGestSalon suppression = new ServeurGestSalon(
+      nom,
+      nom,
+      client,
+      this,
+      "delete"
+    );
+    suppression.start();
+  }
+
+  /**
+   * Récupère la liste des salons sous forme de string
+   * @return La liste des salons
+   */
   public String getSalonsString() {
     String res = "";
     for (Salon salon : this.salons) {
@@ -142,16 +131,28 @@ public class Serveur {
     return null;
   }
 
+  /**
+   * Lance un thread qui gère le changement de salon
+   * @param client Le client qui change de salon
+   * @param oldSalon Le salon d'origine
+   * @param newSalon Le salon de destination
+   */
   public void changeSalon(Socket client, String oldSalon, String newSalon) {
     ServeurGestSalon ajouteur = new ServeurGestSalon(
       newSalon,
       oldSalon,
       client,
-      this
+      this,
+      "change"
     );
     ajouteur.start();
   }
 
+  /**
+   * Récupère une session à partir d'un socket
+   * @param client Le socket du client
+   * @return La session du client
+   */
   public Session getSession(Socket client) {
     for (Session session : this.clients) {
       if (session.getSocket() == client) {
