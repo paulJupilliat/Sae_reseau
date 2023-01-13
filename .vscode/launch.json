@@ -3,6 +3,13 @@
 "configurations": [
     {
         "type": "java",
+        "name": "Launch ClientIHM",
+        "request": "launch",
+        "mainClass": "ihm.ClientIHM",
+        "projectName": "Sae_reseau_d1b04c0c"
+    },
+    {
+        "type": "java",
         "name": "Launch Serveur",
         "request": "launch",
         "mainClass": "launch.Serveur",

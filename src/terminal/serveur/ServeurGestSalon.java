@@ -27,7 +27,6 @@ public class ServeurGestSalon extends Thread {
     this.newSalon = this.findSalon(newSalon);
     this.oldSalon = this.findSalon(oldSalon);
     this.action = action;
-    System.out.println("new " + this.newSalon);
   }
 
   public Salon findSalon(String nom) {
@@ -78,11 +77,12 @@ public class ServeurGestSalon extends Thread {
 
   private void createSalon() {
     Salon nvSalon = new Salon(
-        this.nomNewSalon,
-        this.nomNewSalon,
-        10,
-        0,
-        this.serveur);
+      this.nomNewSalon,
+      this.nomNewSalon,
+      10,
+      0,
+      this.serveur
+    );
     // Si le nom n'est pas déjà pris
     if (this.serveur.getSalon(nvSalon.getNom()) == null) {
       this.salons.add(nvSalon);
@@ -133,17 +133,17 @@ public class ServeurGestSalon extends Thread {
    * Si le salon que l'on veut rejoindre est plein, on génère une exception
    */
   private void changeSalon() throws ExceptionSalon {
-    System.out.println("step 0");
+    try{
     if (this.newSalon.connexion(this.client)) {
-      System.out.println("step 1");
       if (this.oldSalon != null) {
-        System.out.println("step 2");
         this.oldSalon.deco(this.client);
       }
     } else {
-      System.out.println("step 3");
       throw new ExceptionSalon("Le salon est plein");
     }
-    System.out.println("step 4");
+  }
+  catch(Exception e){
+    throw new ExceptionSalon("Le salon n'existe pas");
+  }
   }
 }

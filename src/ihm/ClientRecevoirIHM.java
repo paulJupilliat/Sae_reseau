@@ -29,6 +29,9 @@ public class ClientRecevoirIHM extends Thread {
         if (msg.matches("serveur : Vous avez rejoint le salon #.*")) {
           this.client.setSalonActuel(msg.substring(msg.indexOf("#") + 1, msg.length()));
         }
+        else if (msg.matches("| Config | General |.*")) {
+          this.client.getChatApplication().setSalonsTextBrut(msg);
+        }
         this.client.getChatApplication().putNewMessage(msg);
         System.out.println(msg);
         msg = in.readLine();

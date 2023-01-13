@@ -3,6 +3,8 @@ package launch;
 import ihm.ClientIHM;
 import ihm.controlleur.ButtonCloseControlleur;
 import ihm.controlleur.ButtonControlleur;
+import java.lang.ModuleLayer.Controller;
+import java.util.List;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -11,7 +13,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import terminal.serveur.Salon;
 
 public class ChatApplication extends Application {
   private BorderPane root;
@@ -19,10 +23,15 @@ public class ChatApplication extends Application {
   private TextField textField;
   private Button button;
   private HBox hBox;
+  private Button buttonNewSalon;
+  private Button btnAllSallon;
+  private ClientIHM client;
+  private String salonsTextBrut; //tous les salons reçus
+  private List<String> listSalons; //tous les salons reçus
 
   @Override
   public void start(Stage primaryStage) throws Exception {
-    ClientIHM client = new ClientIHM("localhost", 5001, "ben", this);
+    this.client = new ClientIHM("localhost", 5001, "ben", this);
     // Creer une fentre avec un champs textuel et un bouton
     this.root = new BorderPane();
     this.textArea = new TextArea();
@@ -30,16 +39,59 @@ public class ChatApplication extends Application {
     this.button = new Button("Envoyer");
     this.button.setOnAction(new ButtonControlleur(this, "Envoyer", client));
     this.textField.setOnAction(new ButtonControlleur(this, "Envoyer", client));
-    this.hBox = new HBox();
+    this.topMenu();
+    this.showChatMode();
+
+    // phase style
     this.hBox.setPadding(new Insets(10));
     this.hBox.setSpacing(10);
-    this.hBox.getChildren().addAll(textField, button);
-    this.root.setCenter(textArea);
-    this.root.setBottom(hBox);
+    this.textArea.setEditable(false);
     Scene scene = new Scene(root, 400, 400);
     primaryStage.setScene(scene);
     primaryStage.show();
     primaryStage.setOnCloseRequest(new ButtonCloseControlleur(client));
+  }
+
+  public void showChatMode() {
+    this.hBox = new HBox();
+    this.hBox.getChildren().addAll(textField, button);
+    this.btnAllSallon.disableProperty().set(false);
+    this.root.setBottom(hBox);
+    this.root.setCenter(textArea);
+  }
+
+  public void topMenu() {
+    HBox topMenu = new HBox();
+    this.buttonNewSalon = new Button("Nouveau salon");
+    this.btnAllSallon = new Button("Tous les salons");
+    this.btnAllSallon.setOnAction(
+        new ButtonControlleur(this, "AllSalon", client)
+    );
+    topMenu.getChildren().addAll(this.buttonNewSalon, this.btnAllSallon);
+    this.root.setTop(topMenu);
+  }
+
+  public void showAllSalon(List<String> salons) {
+    VBox allSalon = new VBox();
+    for (String salon : this.listSalons) {
+      Button btn = new Button(salon);
+      btn.setOnAction(new ButtonControlleur(this, "Salon", client, salon));
+      allSalon.getChildren().add(btn);
+    }
+    this.btnAllSallon.disableProperty().set(true);
+    this.root.setCenter(allSalon);
+  }
+
+  public void setListSalons(List<String> listSalons) {
+    this.listSalons = listSalons;
+  }
+
+  public void setSalonsTextBrut(String salonsTextBrut) {
+    this.salonsTextBrut = salonsTextBrut;
+  }
+
+  public String getSalonsTextBrut() {
+    return this.salonsTextBrut;
   }
 
   public TextField getTextField() {
