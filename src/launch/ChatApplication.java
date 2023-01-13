@@ -14,6 +14,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import terminal.serveur.Salon;
 
@@ -28,12 +29,14 @@ public class ChatApplication extends Application {
   private ClientIHM client;
   private String salonsTextBrut; //tous les salons reçus
   private List<String> listSalons; //tous les salons reçus
+  private Text salonActuel;
 
   @Override
   public void start(Stage primaryStage) throws Exception {
     this.client = new ClientIHM("localhost", 5001, "ben", this);
     // Creer une fentre avec un champs textuel et un bouton
     this.root = new BorderPane();
+    this.salonActuel = new Text(); //nom du salon courant
     this.textArea = new TextArea();
     this.textField = new TextField();
     this.button = new Button("Envoyer");
@@ -41,7 +44,6 @@ public class ChatApplication extends Application {
     this.textField.setOnAction(new ButtonControlleur(this, "Envoyer", client));
     this.topMenu();
     this.showChatMode();
-
     // phase style
     this.hBox.setPadding(new Insets(10));
     this.hBox.setSpacing(10);
@@ -52,25 +54,36 @@ public class ChatApplication extends Application {
     primaryStage.setOnCloseRequest(new ButtonCloseControlleur(client));
   }
 
+  /**
+   * Affiche le mode chat
+   */
   public void showChatMode() {
     this.hBox = new HBox();
     this.hBox.getChildren().addAll(textField, button);
     this.btnAllSallon.disableProperty().set(false);
     this.root.setBottom(hBox);
     this.root.setCenter(textArea);
+    this.salonActuel.setText("salon: " + this.client.getSalonActuel());
   }
 
+  /**
+   * Affiche les boutons du menu
+   */
   public void topMenu() {
     HBox topMenu = new HBox();
     this.buttonNewSalon = new Button("Nouveau salon");
     this.btnAllSallon = new Button("Tous les salons");
     this.btnAllSallon.setOnAction(
-        new ButtonControlleur(this, "AllSalon", client)
-    );
-    topMenu.getChildren().addAll(this.buttonNewSalon, this.btnAllSallon);
+        new ButtonControlleur(this, "AllSalon", client));
+    // Met en à droite le nom du salon courant
+    topMenu.getChildren().addAll(this.buttonNewSalon, this.btnAllSallon, this.salonActuel);
     this.root.setTop(topMenu);
   }
 
+  /**
+   * Affiche tous les salons disponibles
+   * @param salons liste des salons
+   */
   public void showAllSalon(List<String> salons) {
     VBox allSalon = new VBox();
     for (String salon : this.listSalons) {

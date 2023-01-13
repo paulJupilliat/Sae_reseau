@@ -1,11 +1,11 @@
 package ihm.modele;
 
+import ihm.ClientIHM;
+import ihm.controlleur.ButtonControlleur;
+import java.lang.System.Logger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import ihm.ClientIHM;
-import ihm.controlleur.ButtonControlleur;
 import launch.ChatApplication;
 
 public class ModeleApp {
@@ -13,6 +13,7 @@ public class ModeleApp {
   private ChatApplication chatApplication;
   private ClientIHM client;
   private List<String> salons;
+  private final Logger loger = System.getLogger("ModeleApp");
 
   public ModeleApp(
     ChatApplication chatApplication,
@@ -43,7 +44,10 @@ public class ModeleApp {
           setSalons(nomSalons);
           chatApplication.setSalonsTextBrut(null);
         } catch (Exception e) {
-          System.out.println("Erreur dans le thread");
+          loger.log(
+            System.Logger.Level.ERROR,
+            "Erreur dans la recuperation des salons"
+          );
           salons = new ArrayList<>();
         }
       }
@@ -55,12 +59,16 @@ public class ModeleApp {
       e.printStackTrace();
     }
     // enlever l'espace en debut de chaine
-    for (int i=0; i<salons.size(); i++) {
+    for (int i = 0; i < salons.size(); i++) {
       salons.set(i, salons.get(i).trim());
+      System.out.println(salons.get(i));
+      // supprimer les chaines vides et le salon Config
+      if (salons.get(i).equals("") || salons.get(i).equals("Config")) {
+        salons.remove(i);
+        i--;
+      }
     }
-    for(String salon : salons) {
-      System.out.println("salon" + salon + "fin");
-    }
+    for (String salon : salons) {}
     return this.salons;
   }
 }

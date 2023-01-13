@@ -1,4 +1,5 @@
 package ihm;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -27,13 +28,15 @@ public class ClientRecevoirIHM extends Thread {
       msg = in.readLine();
       while (msg != null) {
         if (msg.matches("serveur : Vous avez rejoint le salon #.*")) {
-          this.client.setSalonActuel(msg.substring(msg.indexOf("#") + 1, msg.length()));
-        }
-        else if (msg.matches("| Config | General |.*")) {
+          this.client.setSalonActuel(
+              msg.substring(msg.indexOf("#") + 1, msg.length())
+          );
+          this.afficheMess("\n" + msg);
+        } else if (msg.matches("| Config | General |.*")) {
           this.client.getChatApplication().setSalonsTextBrut(msg);
+        } else {
+          this.afficheMess(msg);
         }
-        this.client.getChatApplication().putNewMessage(msg);
-        System.out.println(msg);
         msg = in.readLine();
       }
       System.out.println("Serveur déconecté");
@@ -44,5 +47,10 @@ public class ClientRecevoirIHM extends Thread {
 
       System.exit(1);
     }
+  }
+
+  public void afficheMess(String msg) {
+    this.client.getChatApplication().putNewMessage(msg);
+    System.out.println(msg);
   }
 }

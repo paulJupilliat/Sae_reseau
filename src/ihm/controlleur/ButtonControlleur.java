@@ -48,7 +48,6 @@ public class ButtonControlleur implements EventHandler<ActionEvent> {
       this.chatApplication.setListSalons(this.modele.getAllSalon());
       this.chatApplication.showAllSalon(this.modele.getAllSalon());
     } else if (action.equals("Salon")) {
-      System.out.println("contr");
       this.client.sendMessage("/salon " + this.salonDest);
       this.chatApplication.showChatMode();
     }
