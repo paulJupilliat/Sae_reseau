@@ -166,4 +166,26 @@ public class Serveur {
     Serveur serveur = new Serveur(5001);
     serveur.launch();
   }
+
+  /**
+   * Lance un thread qui vérifie si un nom d'utilisateur est déjà utilisé
+   * @param username Le nom d'utilisateur à vérifier
+   * @return Vrai si le nom d'utilisateur est déjà utilisé
+   */
+  public boolean isUsernameUsed(String username) {
+    ServeurGestSalon verif = new ServeurGestSalon(
+      username,
+      null,
+      null,
+      this,
+      "verif"
+    );
+    verif.start();
+    try {
+      verif.join();
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    return verif.isUsed();
+  }
 }

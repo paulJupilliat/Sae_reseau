@@ -138,6 +138,15 @@ public class ChatApplication extends Application {
     new ButtonControlleur(this, "NewSalon", client, dialog.getEditor().getText()).handle(null);
   }
 
+  public void popUpAskUsername() {
+    TextInputDialog dialog = new TextInputDialog();
+    dialog.setTitle("Username");
+    dialog.setHeaderText("Donnez un nom d'utilisateur");
+    dialog.setContentText("Entrez votre nom d'utilisateur:");
+    dialog.showAndWait();
+    new ButtonControlleur(this, "Username", client, dialog.getEditor().getText()).handle(null);
+  }
+
   public static void main(String[] args) {
     launch(args);
   }

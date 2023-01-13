@@ -11,7 +11,7 @@ public class ButtonControlleur implements EventHandler<ActionEvent> {
   private String action;
   private ClientIHM client;
   private ModeleApp modele;
-  private String salonDest;
+  private String data;
 
   public ButtonControlleur(
     ChatApplication chatApplication,
@@ -28,13 +28,13 @@ public class ButtonControlleur implements EventHandler<ActionEvent> {
     ChatApplication chatApplication,
     String action,
     ClientIHM client,
-    String salonDest
+    String data
   ) {
     this.chatApplication = chatApplication;
     this.action = action;
     this.client = client;
     this.modele = new ModeleApp(chatApplication, this);
-    this.salonDest = salonDest;
+    this.data = data;
   }
 
   @Override
@@ -48,15 +48,17 @@ public class ButtonControlleur implements EventHandler<ActionEvent> {
       this.chatApplication.setListSalons(this.modele.getAllSalon());
       this.chatApplication.showAllSalon(this.modele.getAllSalon());
     } else if (action.equals("Salon")) {
-      this.client.sendMessage("/salon " + this.salonDest);
+      this.client.sendMessage("/salon " + this.data);
       this.chatApplication.showChatMode();
     }
     else if (action.equals("NewSalonAsk")) {
       this.chatApplication.popUpAskSalon();
     }
     else if (action.equals("NewSalon")) {
-      this.client.sendMessage("/createsalon " + this.salonDest);
+      this.client.sendMessage("/createsalon " + this.data);
     }
+    else if(action.equals("Username")){
+      this.client.sendMessage("/username " + this.data);}
   }
 
   public ClientIHM getClient() {

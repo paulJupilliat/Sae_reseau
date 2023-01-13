@@ -30,7 +30,8 @@ public class ClientRecevoirIHM extends Thread {
           this.afficherMessage("\n" + msg);
         } else if (msg.indexOf("| Config | General |") != -1) {
           this.client.getChatApplication().setSalonsTextBrut(msg);
-        } else {
+        } 
+        else {
           this.afficherMessage(msg);
         }
         msg = in.readLine();

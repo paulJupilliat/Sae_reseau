@@ -8,11 +8,13 @@ public class Session {
   private Socket socket;
   private Serveur serveur;
   private ServeurEcouter serveurEcouter;
+  private String nom;
 
   public Session(Socket socket, Serveur serveur) {
     try {
       this.socket = socket;
       this.serveur = serveur;
+      this.nom = "Anonyme";
       this.serveurEcouter = new ServeurEcouter(socket, serveur);
       this.serveurEcouter.start();
     } catch (Exception e) {
@@ -25,5 +27,13 @@ public class Session {
 
   public void send(String msg) {
     this.serveur.sendAll(msg, socket, null);
+  }
+
+  public void setNom(String nom) {
+    this.nom = nom;
+  }
+  
+  public String getNom() {
+      return nom;
   }
 }

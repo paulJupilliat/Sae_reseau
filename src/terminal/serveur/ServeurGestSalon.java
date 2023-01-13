@@ -12,6 +12,7 @@ public class ServeurGestSalon extends Thread {
   private Socket client;
   private Serveur serveur;
   private String action;
+  private boolean used;
 
   public ServeurGestSalon(
     String newSalon,
@@ -61,7 +62,19 @@ public class ServeurGestSalon extends Thread {
       }
     } else if (this.action.equals("delete")) {
       this.deleteSalon();
+    } else if (this.action.equals("verif")) {
+      this.used = this.verifUser();
     }
+  }
+
+  private boolean verifUser() {
+    for (Session client : this.serveur.getClients()) {
+      if (client.getNom().equals(this.newSalon)) {
+        this.sendInfo("serveur : " + client.getNom() + " est déjà dans le chat");
+        return true;
+      }
+    }
+    return false;
   }
 
   private void deleteSalon() {
@@ -73,6 +86,10 @@ public class ServeurGestSalon extends Thread {
       this.salons.remove(this.newSalon);
       this.sendInfo("Salon supprimé");
     }
+  }
+
+  public boolean isUsed() {
+      return used;
   }
 
   private void createSalon() {
@@ -133,17 +150,16 @@ public class ServeurGestSalon extends Thread {
    * Si le salon que l'on veut rejoindre est plein, on génère une exception
    */
   private void changeSalon() throws ExceptionSalon {
-    try{
-    if (this.newSalon.connexion(this.client)) {
-      if (this.oldSalon != null) {
-        this.oldSalon.deco(this.client);
+    try {
+      if (this.newSalon.connexion(this.client)) {
+        if (this.oldSalon != null) {
+          this.oldSalon.deco(this.client);
+        }
+      } else {
+        throw new ExceptionSalon("Le salon est plein");
       }
-    } else {
-      throw new ExceptionSalon("Le salon est plein");
+    } catch (Exception e) {
+      throw new ExceptionSalon("Le salon n'existe pas");
     }
-  }
-  catch(Exception e){
-    throw new ExceptionSalon("Le salon n'existe pas");
-  }
   }
 }

@@ -1,13 +1,12 @@
 package terminal.serveur;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
-
 import launch.Serveur;
-
 
 public class ServeurEcouter extends Thread {
   private String msg;
@@ -81,7 +80,8 @@ public class ServeurEcouter extends Thread {
           if (salon == null) {
             this.serveur.sendInfo(
                 "Commande invalide '/createsalon <nomSalon>'",
-                clientSocket);
+                clientSocket
+              );
           } else {
             this.serveur.createSalon(salon, this.clientSocket);
           }
@@ -92,12 +92,29 @@ public class ServeurEcouter extends Thread {
           if (salon == null) {
             this.serveur.sendInfo(
                 "Commande invalide '/deletesalon <nomSalon>'",
-                clientSocket);
+                clientSocket
+              );
           } else {
             this.serveur.deleteSalon(salon, this.clientSocket);
           }
         }
         // salon pour générer le nom
+        else if (
+        msg.matches(".* : /username .*") && salonActuel.equals("Config")
+          ) {
+          System.out.println("username");
+          String username = this.getUsernameMess(msg);
+          // Si le username n'est pas déjà utilisé dans les sessions du serveur
+          if (this.serveur.isUsernameUsed(username)) {
+            this.serveur.sendInfo(
+                "Ce nom d'utilisateur est déjà utilisé",
+                clientSocket
+              );
+          } else {
+            this.serveur.getSession(clientSocket).setNom(username);
+            this.serveur.sendInfo("Bienvenue ", clientSocket);
+          }
+        }
         // si le message n'est pas une commande
         else {
           // enlever la partie salon
@@ -114,5 +131,15 @@ public class ServeurEcouter extends Thread {
     } catch (IOException e) {
       System.out.println("Un client s'est déconnecté");
     }
+  }
+
+  /**
+   * Récupére le nom de l'utilisateur
+   * @param msg2 {String} Le message
+   * @return {String} Le nom de l'utilisateur
+   */
+  private String getUsernameMess(String msg2) {
+    int startIndex = msg2.indexOf("username") + 1;
+    return msg2.substring(startIndex, msg2.length());
   }
 }
