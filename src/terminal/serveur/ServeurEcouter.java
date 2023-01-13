@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Scanner;
 import launch.Serveur;
@@ -97,23 +98,52 @@ public class ServeurEcouter extends Thread {
           } else {
             this.serveur.deleteSalon(salon, this.clientSocket);
           }
+        } else if (msg.matches(".* : /ip")) {
+          InetAddress inetAddress = InetAddress.getLocalHost();
+          String ip = inetAddress.getHostAddress();
+          this.serveur.sendInfo(
+              "L'adresse ip du serveur est: " + ip,
+              clientSocket
+            );
         }
         // salon pour générer le nom
         else if (
-        msg.matches(".* : /username .*") && salonActuel.equals("Config")
-          ) {
-          System.out.println("username");
+          msg.matches(".* : /username .*") && salonActuel.equals("Config")
+        ) {
           String username = this.getUsernameMess(msg);
           // Si le username n'est pas déjà utilisé dans les sessions du serveur
-          if (this.serveur.isUsernameUsed(username)) {
+          if (this.serveur.isUsernameUsed(username) || username.equals("")) {
             this.serveur.sendInfo(
                 "Ce nom d'utilisateur est déjà utilisé",
                 clientSocket
               );
           } else {
             this.serveur.getSession(clientSocket).setNom(username);
-            this.serveur.sendInfo("Bienvenue ", clientSocket);
+            this.serveur.sendInfo("Bienvenue " + username, clientSocket);
           }
+        } else if (msg.matches(".* : /help") && salonActuel.equals("Config")) {
+          this.serveur.sendInfo("Liste des commandes : ", clientSocket);
+          this.serveur.sendInfo(
+              "/salons : Afficher la liste des salons",
+              clientSocket
+            );
+          this.serveur.sendInfo(
+              "/salon <nomSalon> : Rejoindre un salon",
+              clientSocket
+            );
+          this.serveur.sendInfo(
+              "/createsalon <nomSalon> : Créer un salon",
+              clientSocket
+            );
+          this.serveur.sendInfo(
+              "/deletesalon <nomSalon> : Supprimer un salon",
+              clientSocket
+            );
+          this.serveur.sendInfo("/quit : Quitter le serveur", clientSocket);
+          this.serveur.sendInfo(
+              "/ip : Afficher l'adresse ip du serveur",
+              clientSocket
+            );
         }
         // si le message n'est pas une commande
         else {
@@ -126,10 +156,19 @@ public class ServeurEcouter extends Thread {
       //sortir de la boucle si le client a déconecté
       System.out.println("Client déconecté");
       //fermer le flux et la session socket
+      this.serveur.deco(clientSocket, this.getSalon());
       out.close();
       clientSocket.close();
     } catch (IOException e) {
       System.out.println("Un client s'est déconnecté");
+      // fermer le flux et la session socket
+      try {
+        this.serveur.deco(clientSocket, this.getSalon());
+        out.close();
+        clientSocket.close();
+      } catch (IOException e1) {
+        e1.printStackTrace();
+      }
     }
   }
 
@@ -140,6 +179,6 @@ public class ServeurEcouter extends Thread {
    */
   private String getUsernameMess(String msg2) {
     int startIndex = msg2.indexOf("username") + 1;
-    return msg2.substring(startIndex, msg2.length());
+    return msg2.substring(startIndex + 8, msg2.length());
   }
 }

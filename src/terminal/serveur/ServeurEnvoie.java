@@ -59,6 +59,7 @@ public class ServeurEnvoie extends Thread {
       PrintWriter out = new PrintWriter(envoyeur.getOutputStream());
       out.println(message);
       out.flush();
+      System.out.println("Message envoyé à " + envoyeur.getInetAddress() + " : " + message);
     } catch (IOException e) {
       e.printStackTrace();
     }

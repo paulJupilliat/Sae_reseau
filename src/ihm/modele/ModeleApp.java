@@ -37,8 +37,9 @@ public class ModeleApp {
 
       @Override
       public void run() {
-        while (chatApplication.getSalonsTextBrut() == null) {}
+        while (chatApplication.getSalonsTextBrut() == null) {System.out.println("attente");}
         try {
+          System.out.println("début thread");
           String res = chatApplication.getSalonsTextBrut();
           String[] nomSalons = res.split("\\|");
           setSalons(nomSalons);
@@ -67,7 +68,6 @@ public class ModeleApp {
         i--;
       }
     }
-    for (String salon : salons) {}
     return this.salons;
   }
 }

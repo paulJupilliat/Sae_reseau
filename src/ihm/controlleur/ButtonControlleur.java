@@ -5,6 +5,7 @@ import ihm.modele.ModeleApp;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import launch.ChatApplication;
+import terminal.serveur.ExceptionSalon;
 
 public class ButtonControlleur implements EventHandler<ActionEvent> {
   private ChatApplication chatApplication;
@@ -44,21 +45,34 @@ public class ButtonControlleur implements EventHandler<ActionEvent> {
       chatApplication.getTextArea().appendText(message + "\n");
       chatApplication.getTextField().clear();
       client.sendMessage(message);
-    } else if (action.equals("AllSalon")) {
+    }
+    else if (action.equals("Close")) {
+      this.client.sendMessage("/quit");
+    }
+    else if (action.equals("AllSalon")) {
+      this.chatApplication.showChargement();
       this.chatApplication.setListSalons(this.modele.getAllSalon());
       this.chatApplication.showAllSalon(this.modele.getAllSalon());
     } else if (action.equals("Salon")) {
       this.client.sendMessage("/salon " + this.data);
       this.chatApplication.showChatMode();
-    }
-    else if (action.equals("NewSalonAsk")) {
+    } else if (action.equals("NewSalonAsk")) {
+      this.chatApplication.showChatMode();
       this.chatApplication.popUpAskSalon();
-    }
-    else if (action.equals("NewSalon")) {
+    } else if (action.equals("NewSalon")) {
       this.client.sendMessage("/createsalon " + this.data);
+      
+    } else if (action.equals("Username")) {
+      this.client.sendMessage("/username " + this.data);
+    } else if (action.equals("ChangeIP")) {
+      try {
+        this.chatApplication.setClient(
+            new ClientIHM(this.data, 5001, this.chatApplication.getNomUser(), this.chatApplication)
+          );
+      } catch (ExceptionSalon e) {
+        e.printStackTrace();
+      }
     }
-    else if(action.equals("Username")){
-      this.client.sendMessage("/username " + this.data);}
   }
 
   public ClientIHM getClient() {

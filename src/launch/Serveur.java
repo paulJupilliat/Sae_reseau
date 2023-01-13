@@ -174,12 +174,11 @@ public class Serveur {
    */
   public boolean isUsernameUsed(String username) {
     ServeurGestSalon verif = new ServeurGestSalon(
-      username,
-      null,
-      null,
-      this,
-      "verif"
-    );
+        username,
+        null,
+        null,
+        this,
+        "verif");
     verif.start();
     try {
       verif.join();
@@ -187,5 +186,15 @@ public class Serveur {
       e.printStackTrace();
     }
     return verif.isUsed();
+  }
+  
+  public void deco(Socket client, String salon) {
+    ServeurGestSalon deco = new ServeurGestSalon(
+        null,
+        salon,
+        client,
+        this,
+        "deco");
+    deco.start();
   }
 }

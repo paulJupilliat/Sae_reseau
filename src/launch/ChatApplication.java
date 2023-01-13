@@ -31,28 +31,47 @@ public class ChatApplication extends Application {
   private String salonsTextBrut; //tous les salons reçus
   private List<String> listSalons; //tous les salons reçus
   private Text salonActuel;
+  private Text username;
 
   @Override
   public void start(Stage primaryStage) throws Exception {
     // Creer une fentre avec un champs textuel et un bouton
     this.root = new BorderPane();
+    Scene scene = new Scene(root, 400, 400);
+    primaryStage.setScene(scene);
+    primaryStage.show();
     this.salonActuel = new Text(); //nom du salon courant
     this.textArea = new TextArea();
     this.textField = new TextField();
-    this.client = new ClientIHM("localhost", 5001, "ben", this);
+    this.username = new Text("Anonyme");
     this.button = new Button("Envoyer");
+    boolean otherval = false;
+    while (this.username.getText().equals("Anonyme")) {
+      this.showChargement();
+      this.username.setText(this.popUpAskUsername(otherval));
+      otherval = true;
+      try {
+        this.client = new ClientIHM("localhost", 5001, this.username.getText(), this);
+      } catch (Exception e) {
+        this.username.setText("Anonyme");
+      }
+    }
+    this.topMenu();
+    this.setupChatMode();
     this.button.setOnAction(new ButtonControlleur(this, "Envoyer", client));
     this.textField.setOnAction(new ButtonControlleur(this, "Envoyer", client));
-    this.topMenu();
+    primaryStage.setOnCloseRequest(new ButtonCloseControlleur(client));
+  }
+
+  /**
+   * Met en place le mode chat (affichage)
+   */
+  public void setupChatMode() {
     this.showChatMode();
     // phase style
     this.hBox.setPadding(new Insets(10));
     this.hBox.setSpacing(10);
     this.textArea.setEditable(false);
-    Scene scene = new Scene(root, 400, 400);
-    primaryStage.setScene(scene);
-    primaryStage.show();
-    primaryStage.setOnCloseRequest(new ButtonCloseControlleur(client));
   }
 
   /**
@@ -67,6 +86,29 @@ public class ChatApplication extends Application {
     this.salonActuel.setText("salon: " + this.client.getSalonActuel());
   }
 
+  public void askIp() {
+    TextInputDialog dialog = new TextInputDialog();
+    dialog.setTitle("Donnez l'adresse IP du serveur");
+    dialog.setHeaderText("Donnez l'adresse IP du serveur");
+    dialog.setContentText("IP:");
+    dialog.showAndWait();
+    new ButtonControlleur(
+      null,
+      "ChangeIP",
+      client,
+      dialog.getEditor().getText()
+    );
+  }
+
+  public void setClient(ClientIHM client) {
+    this.client = client;
+  }
+
+  public void showChargement() {
+    Text chargement = new Text("Chargement...");
+    this.root.setCenter(chargement);
+  }
+
   /**
    * Affiche les boutons du menu
    */
@@ -74,12 +116,16 @@ public class ChatApplication extends Application {
     HBox topMenu = new HBox();
     this.buttonNewSalon = new Button("Nouveau salon");
     this.buttonNewSalon.setOnAction(
-        new ButtonControlleur(this, "NewSalonAsk", client));
+        new ButtonControlleur(this, "NewSalonAsk", client)
+      );
     this.btnAllSallon = new Button("Tous les salons");
     this.btnAllSallon.setOnAction(
-        new ButtonControlleur(this, "AllSalon", client));
+        new ButtonControlleur(this, "AllSalon", client)
+      );
     // Met en à droite le nom du salon courant
-    topMenu.getChildren().addAll(this.buttonNewSalon, this.btnAllSallon, this.salonActuel);
+    topMenu
+      .getChildren()
+      .addAll(this.buttonNewSalon, this.btnAllSallon, this.salonActuel);
     this.root.setTop(topMenu);
   }
 
@@ -135,16 +181,34 @@ public class ChatApplication extends Application {
     dialog.setHeaderText("Créer un nouveau salon");
     dialog.setContentText("Entrez le nom du salon:");
     dialog.showAndWait();
-    new ButtonControlleur(this, "NewSalon", client, dialog.getEditor().getText()).handle(null);
+    new ButtonControlleur(
+      this,
+      "NewSalon",
+      client,
+      dialog.getEditor().getText()
+    )
+    .handle(null);
   }
 
-  public void popUpAskUsername() {
+  public String popUpAskUsername(boolean other) {
     TextInputDialog dialog = new TextInputDialog();
     dialog.setTitle("Username");
     dialog.setHeaderText("Donnez un nom d'utilisateur");
-    dialog.setContentText("Entrez votre nom d'utilisateur:");
+    if (other) {
+      dialog.setContentText("Entrez votre nom d'utilisateur:\n (different car déjà pris)");
+    } else {
+      dialog.setContentText("Entrez votre nom d'utilisateur:");
+    }
     dialog.showAndWait();
-    new ButtonControlleur(this, "Username", client, dialog.getEditor().getText()).handle(null);
+    // quand clique sur anuler
+    if (dialog.getEditor().getText().equals("")) {
+      new ButtonControlleur(null, "Close", client).handle(null);
+    }
+    return dialog.getEditor().getText();
+  }
+
+  public String getNomUser() {
+    return this.username.getText();
   }
 
   public static void main(String[] args) {

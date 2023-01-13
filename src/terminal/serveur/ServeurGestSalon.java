@@ -65,15 +65,25 @@ public class ServeurGestSalon extends Thread {
     } else if (this.action.equals("verif")) {
       this.used = this.verifUser();
     }
+    else if (this.action.equals("deco")) {
+      this.deco();
+    }
+  }
+
+  private void deco() {
+    this.oldSalon.deco(client);
+    Session session = this.serveur.getSession(client);
+    this.serveur.getClients().remove(session);
   }
 
   private boolean verifUser() {
     for (Session client : this.serveur.getClients()) {
-      if (client.getNom().equals(this.newSalon)) {
-        this.sendInfo("serveur : " + client.getNom() + " est déjà dans le chat");
-        return true;
+      if (client.getNom().equals(this.nomNewSalon)) {
+          this.used = true;
+          return true;
       }
     }
+    this.used = false;
     return false;
   }
 
@@ -88,8 +98,12 @@ public class ServeurGestSalon extends Thread {
     }
   }
 
+  /**
+   * Regarde si le nom d'un user est déjà pris
+   * @return
+   */
   public boolean isUsed() {
-      return used;
+    return this.used;
   }
 
   private void createSalon() {

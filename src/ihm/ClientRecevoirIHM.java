@@ -23,14 +23,20 @@ public class ClientRecevoirIHM extends Thread {
     try {
       msg = in.readLine();
       while (msg != null) {
+        System.out.println(msg);
         if (msg.matches("serveur : Vous avez rejoint le salon #.*")) {
           this.client.setSalonActuel(
-              msg.substring(msg.indexOf("#") + 1, msg.length())
-            );
+              msg.substring(msg.indexOf("#") + 1, msg.length()));
           this.afficherMessage("\n" + msg);
+          this.client.setStep(1);
         } else if (msg.indexOf("| Config | General |") != -1) {
           this.client.getChatApplication().setSalonsTextBrut(msg);
-        } 
+        } else if (msg.matches("Ce nom d'utilisateur est déjà utilisé")) {
+          this.client.setStep(-1);
+        }
+        else if (msg.matches("Bienvenue .*")) {
+          this.client.setStep(2);
+        }
         else {
           this.afficherMessage(msg);
         }
@@ -46,6 +52,10 @@ public class ClientRecevoirIHM extends Thread {
     }
   }
 
+  /**
+   * Affiche le message dans la console et dans l'application
+   * @param msg {String} Le message à afficher
+   */
   public void afficherMessage(String msg) {
     this.client.getChatApplication().putNewMessage(msg);
     System.out.println(msg);
