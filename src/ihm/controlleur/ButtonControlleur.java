@@ -51,6 +51,12 @@ public class ButtonControlleur implements EventHandler<ActionEvent> {
       this.client.sendMessage("/salon " + this.salonDest);
       this.chatApplication.showChatMode();
     }
+    else if (action.equals("NewSalonAsk")) {
+      this.chatApplication.popUpAskSalon();
+    }
+    else if (action.equals("NewSalon")) {
+      this.client.sendMessage("/createsalon " + this.salonDest);
+    }
   }
 
   public ClientIHM getClient() {

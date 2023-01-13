@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -33,12 +34,12 @@ public class ChatApplication extends Application {
 
   @Override
   public void start(Stage primaryStage) throws Exception {
-    this.client = new ClientIHM("localhost", 5001, "ben", this);
     // Creer une fentre avec un champs textuel et un bouton
     this.root = new BorderPane();
     this.salonActuel = new Text(); //nom du salon courant
     this.textArea = new TextArea();
     this.textField = new TextField();
+    this.client = new ClientIHM("localhost", 5001, "ben", this);
     this.button = new Button("Envoyer");
     this.button.setOnAction(new ButtonControlleur(this, "Envoyer", client));
     this.textField.setOnAction(new ButtonControlleur(this, "Envoyer", client));
@@ -72,6 +73,8 @@ public class ChatApplication extends Application {
   public void topMenu() {
     HBox topMenu = new HBox();
     this.buttonNewSalon = new Button("Nouveau salon");
+    this.buttonNewSalon.setOnAction(
+        new ButtonControlleur(this, "NewSalonAsk", client));
     this.btnAllSallon = new Button("Tous les salons");
     this.btnAllSallon.setOnAction(
         new ButtonControlleur(this, "AllSalon", client));
@@ -115,8 +118,24 @@ public class ChatApplication extends Application {
     return textArea;
   }
 
+  /**
+   * Ajoute un message dans la zone de texte
+   * @param message message à ajouter
+   */
   public void putNewMessage(String message) {
     this.textArea.appendText(message + "\n");
+  }
+
+  /**
+   * Pop up qui demande d'entré le nom du salon
+   */
+  public void popUpAskSalon() {
+    TextInputDialog dialog = new TextInputDialog();
+    dialog.setTitle("Nouveau salon");
+    dialog.setHeaderText("Créer un nouveau salon");
+    dialog.setContentText("Entrez le nom du salon:");
+    dialog.showAndWait();
+    new ButtonControlleur(this, "NewSalon", client, dialog.getEditor().getText()).handle(null);
   }
 
   public static void main(String[] args) {

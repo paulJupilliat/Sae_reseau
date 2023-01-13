@@ -3,10 +3,7 @@ package ihm;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
-import java.text.BreakIterator;
-import java.util.Scanner;
 
 public class ClientRecevoirIHM extends Thread {
   private ClientIHM client;
@@ -17,7 +14,6 @@ public class ClientRecevoirIHM extends Thread {
   public ClientRecevoirIHM(ClientIHM client) throws IOException {
     this.clientSocket = client.getClientSocket();
     this.client = client;
-    new Scanner(System.in);
     in =
       new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
   }
@@ -30,12 +26,12 @@ public class ClientRecevoirIHM extends Thread {
         if (msg.matches("serveur : Vous avez rejoint le salon #.*")) {
           this.client.setSalonActuel(
               msg.substring(msg.indexOf("#") + 1, msg.length())
-          );
-          this.afficheMess("\n" + msg);
-        } else if (msg.matches("| Config | General |.*")) {
+            );
+          this.afficherMessage("\n" + msg);
+        } else if (msg.indexOf("| Config | General |") != -1) {
           this.client.getChatApplication().setSalonsTextBrut(msg);
         } else {
-          this.afficheMess(msg);
+          this.afficherMessage(msg);
         }
         msg = in.readLine();
       }
@@ -49,7 +45,7 @@ public class ClientRecevoirIHM extends Thread {
     }
   }
 
-  public void afficheMess(String msg) {
+  public void afficherMessage(String msg) {
     this.client.getChatApplication().putNewMessage(msg);
     System.out.println(msg);
   }

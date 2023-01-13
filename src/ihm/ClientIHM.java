@@ -27,10 +27,10 @@ public class ClientIHM {
       this.envoyer = new ClientEnvoyerIHM(this);
       this.recevoir = new ClientRecevoirIHM(this);
       this.nom = nom;
-      this.salonActuel = "Config";
       // On lance les threads
       envoyer.start();
       recevoir.start();
+      this.envoyer.send("/salon Config");
     } catch (IOException e) {
       e.printStackTrace();
     }

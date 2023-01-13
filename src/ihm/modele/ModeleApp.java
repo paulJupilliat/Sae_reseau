@@ -61,7 +61,6 @@ public class ModeleApp {
     // enlever l'espace en debut de chaine
     for (int i = 0; i < salons.size(); i++) {
       salons.set(i, salons.get(i).trim());
-      System.out.println(salons.get(i));
       // supprimer les chaines vides et le salon Config
       if (salons.get(i).equals("") || salons.get(i).equals("Config")) {
         salons.remove(i);
