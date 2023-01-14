@@ -19,17 +19,23 @@ Pour lancer ce projet, vous devez installer java et javaFX.
 
 ## Usage <a name = "usage"></a>
 
-Lancer le  serveur avec la commande suivante :
+Lancer le serveur avec la commande suivante :
 
 ```bash
-java -jar server.jar
+java -jar Server.jar
 ```
 
-Lancer le client IHM avec la commande suivante :
+Sur un autre terminal, lancer le client avec la commande suivante :
 
 ```bash
-java -jar client.jar
+java --module-path "{JAVAFX_DIR}\lib" --add-modules javafx.controls,javafx.fxml -cp bin launch.ChatApplication
 ```
+
+Une fois le client lancé, vous pouvez vous connecter avec un pseudo. Et utiliser la commande /help pour voir les commandes disponibles.
+Pour ce connecter sur un autre ordinateur sur le même réseau, lancer <code> /ip </code> pour avoir l'adresse ip du serveur.   
+Ensuite, lancer le client sur l'autre ordinateur et quand l'adresse ip est demandée, entrer l'adresse ip obtenue grâce au client local.   
+
+Vous pouvez maintenant découvrir le chat.
 
 ## Contributing <a name = "contributor"></a>
 Paul JUPILLIAT
