@@ -33,11 +33,11 @@ public class ClientRecevoirIHM extends Thread {
           this.client.getChatApplication().setSalonsTextBrut(msg);
         } else if (msg.matches("Ce nom d'utilisateur est déjà utilisé")) {
           this.client.setStep(-1);
-        }
-        else if (msg.matches("Bienvenue .*")) {
+        } else if (msg.matches("Bienvenue .*")) {
           this.client.setStep(2);
-        }
-        else {
+        } else if (msg.matches("from .* -> .*")) {
+          this.afficherMessage(msg, "blue");
+        } else {
           this.afficherMessage(msg);
         }
         msg = in.readLine();
@@ -52,12 +52,16 @@ public class ClientRecevoirIHM extends Thread {
     }
   }
 
+  public void afficherMessage(String msg) {
+    this.afficherMessage(msg, "black");
+  }
+
   /**
    * Affiche le message dans la console et dans l'application
    * @param msg {String} Le message à afficher
    */
-  public void afficherMessage(String msg) {
-    this.client.getChatApplication().putNewMessage(msg);
+  public void afficherMessage(String msg, String color) {
+    this.client.getChatApplication().putNewMessage(msg, color);
     System.out.println(msg);
   }
 }

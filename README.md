@@ -1,53 +1,35 @@
-# Project Title
+# Chat
 
 ## Table of Contents
 
-- [Project Title](#project-title)
+- [Chat](#chat)
   - [Table of Contents](#table-of-contents)
   - [About ](#about-)
   - [Getting Started ](#getting-started-)
-    - [Prerequisites](#prerequisites)
-    - [Installing](#installing)
   - [Usage ](#usage-)
   - [Contributing ](#contributing-)
 
 ## About <a name = "about"></a>
 
-Write about 1-2 paragraphs describing the purpose of your project.
+Ce projet est un chat pour le projet de SAE. Il s'agit d'un chat simple avec un serveur et un client. Le serveur est en java.
 
 ## Getting Started <a name = "getting_started"></a>
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
-
-### Prerequisites
-
-What things you need to install the software and how to install them.
-
-```
-Give examples
-```
-
-### Installing
-
-A step by step series of examples that tell you how to get a development env running.
-
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo.
+Pour lancer ce projet, vous devez installer java et javaFX.
 
 ## Usage <a name = "usage"></a>
 
-Add notes about how to use the system.
+Lancer le  serveur avec la commande suivante :
+
+```bash
+java -jar server.jar
+```
+
+Lancer le client IHM avec la commande suivante :
+
+```bash
+java -jar client.jar
+```
 
 ## Contributing <a name = "contributor"></a>
 Paul JUPILLIAT

@@ -51,7 +51,8 @@ public class ChatApplication extends Application {
       this.username.setText(this.popUpAskUsername(otherval));
       otherval = true;
       try {
-        this.client = new ClientIHM("localhost", 5001, this.username.getText(), this);
+        this.client =
+          new ClientIHM("localhost", 5001, this.username.getText(), this);
       } catch (Exception e) {
         this.username.setText("Anonyme");
       }
@@ -167,8 +168,9 @@ public class ChatApplication extends Application {
   /**
    * Ajoute un message dans la zone de texte
    * @param message message à ajouter
+   * @param color couleur du message
    */
-  public void putNewMessage(String message) {
+  public void putNewMessage(String message, String color) {
     this.textArea.appendText(message + "\n");
   }
 
@@ -195,7 +197,9 @@ public class ChatApplication extends Application {
     dialog.setTitle("Username");
     dialog.setHeaderText("Donnez un nom d'utilisateur");
     if (other) {
-      dialog.setContentText("Entrez votre nom d'utilisateur:\n (different car déjà pris)");
+      dialog.setContentText(
+        "Entrez votre nom d'utilisateur:\n (different car déjà pris)"
+      );
     } else {
       dialog.setContentText("Entrez votre nom d'utilisateur:");
     }

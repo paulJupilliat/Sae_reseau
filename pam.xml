@@ -1,5 +1,0 @@
-<dependency>
-    <groupId>org.openjfx</groupId>
-    <artifactId>javafx-controls</artifactId>
-    <version>14.0.2</version>
-</dependency>

@@ -38,12 +38,11 @@ public class Serveur {
    */
   public void sendAll(String message, Socket envoyeur, String salon) {
     ServeurEnvoie serveurEnvoie = new ServeurEnvoie(
-      this,
-      message,
-      envoyeur,
-      salon,
-      "all"
-    );
+        this,
+        message,
+        envoyeur,
+        salon,
+        "all");
     serveurEnvoie.start();
   }
 
@@ -55,12 +54,11 @@ public class Serveur {
    */
   public void sendInfo(String msg, Socket socket) {
     ServeurEnvoie serveurEnvoie = new ServeurEnvoie(
-      this,
-      msg,
-      socket,
-      null,
-      "info"
-    );
+        this,
+        msg,
+        socket,
+        null,
+        "info");
     serveurEnvoie.start();
   }
 
@@ -85,23 +83,21 @@ public class Serveur {
 
   public void createSalon(String nom, Socket client) {
     ServeurGestSalon creation = new ServeurGestSalon(
-      nom,
-      nom,
-      client,
-      this,
-      "create"
-    );
+        nom,
+        nom,
+        client,
+        this,
+        "create");
     creation.start();
   }
 
   public void deleteSalon(String nom, Socket client) {
     ServeurGestSalon suppression = new ServeurGestSalon(
-      nom,
-      nom,
-      client,
-      this,
-      "delete"
-    );
+        nom,
+        nom,
+        client,
+        this,
+        "delete");
     suppression.start();
   }
 
@@ -139,12 +135,11 @@ public class Serveur {
    */
   public void changeSalon(Socket client, String oldSalon, String newSalon) {
     ServeurGestSalon ajouteur = new ServeurGestSalon(
-      newSalon,
-      oldSalon,
-      client,
-      this,
-      "change"
-    );
+        newSalon,
+        oldSalon,
+        client,
+        this,
+        "change");
     ajouteur.start();
   }
 
@@ -174,12 +169,11 @@ public class Serveur {
    */
   public boolean isUsernameUsed(String username) {
     ServeurGestSalon verif = new ServeurGestSalon(
-      username,
-      null,
-      null,
-      this,
-      "verif"
-    );
+        username,
+        null,
+        null,
+        this,
+        "verif");
     verif.start();
     try {
       verif.join();
@@ -207,12 +201,11 @@ public class Serveur {
    */
   public void sendTo(Socket clientSocket, String msg, String destinataire) {
     ServeurEnvoie serveurEnvoie = new ServeurEnvoie(
-      this,
-      msg,
-      "to",
-      clientSocket,
-      destinataire
-    );
+        this,
+        msg,
+        "to",
+        clientSocket,
+        destinataire);
     serveurEnvoie.start();
   }
 
@@ -223,12 +216,11 @@ public class Serveur {
    */
   public Session getSessionString(String destinataie) {
     ServeurGestSalon find = new ServeurGestSalon(
-      destinataie,
-      null,
-      null,
-      this,
-      "find"
-    );
+        destinataie,
+        null,
+        null,
+        this,
+        "find");
     find.start();
     try {
       find.join();
@@ -238,3 +230,4 @@ public class Serveur {
     return find.getSession();
   }
 }
+
