@@ -120,25 +120,17 @@ public class ServeurEcouter extends Thread {
               this.clientSocket,
               this.getMsg(msg),
               this.getDestinataire(msg));
-        } else if (msg.matches(".* : /help") && salonActuel.equals("Config")) {
+        } else if (msg.matches(".* : /help")) {
           this.serveur.sendInfo("Liste des commandes : ", clientSocket);
           this.serveur.sendInfo(
-              "/salons : Afficher la liste des salons",
+              "/salons : Afficher la liste des salons" + 
+              "\n/salon <nomSalon> : Rejoindre un salon"+ 
+              "\n/createsalon <nomSalon> : Créer un salon"+
+              "\n/deletesalon <nomSalon> : Supprimer un salon"+
+              "\n/quit : Quitter le serveur"+
+              "\n/ip : Afficher l'adresse ip du serveur"+
+              "\n/msg <destinataire> <message> : Envoyer un message privé",
               clientSocket);
-          this.serveur.sendInfo(
-              "/salon <nomSalon> : Rejoindre un salon",
-              clientSocket);
-          this.serveur.sendInfo(
-              "/createsalon <nomSalon> : Créer un salon",
-              clientSocket);
-          this.serveur.sendInfo(
-              "/deletesalon <nomSalon> : Supprimer un salon",
-              clientSocket);
-          this.serveur.sendInfo("/quit : Quitter le serveur", clientSocket);
-          this.serveur.sendInfo(
-              "/ip : Afficher l'adresse ip du serveur",
-              clientSocket);
-          this.serveur.sendInfo( "/msg <destinataire> <message> : Envoyer un message privé", clientSocket);
         }
         // si le message n'est pas une commande
         else {
