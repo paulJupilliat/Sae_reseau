@@ -21,12 +21,21 @@ public class Session {
       e.printStackTrace();
     }
   }
+
   public Socket getSocket() {
-      return socket;
+    return socket;
   }
 
+  /**
+   * Envoie un message à tous les clients
+   * @param msg {String} Le message à envoyer
+   */
   public void send(String msg) {
     this.serveur.sendAll(msg, socket, null);
+  }
+
+  public void sendToMe(String msg) {
+    this.serveur.sendInfo(msg, socket);
   }
 
   public void setNom(String nom) {

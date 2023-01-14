@@ -81,8 +81,7 @@ public class ServeurEcouter extends Thread {
           if (salon == null) {
             this.serveur.sendInfo(
                 "Commande invalide '/createsalon <nomSalon>'",
-                clientSocket
-              );
+                clientSocket);
           } else {
             this.serveur.createSalon(salon, this.clientSocket);
           }
@@ -93,8 +92,7 @@ public class ServeurEcouter extends Thread {
           if (salon == null) {
             this.serveur.sendInfo(
                 "Commande invalide '/deletesalon <nomSalon>'",
-                clientSocket
-              );
+                clientSocket);
           } else {
             this.serveur.deleteSalon(salon, this.clientSocket);
           }
@@ -103,47 +101,44 @@ public class ServeurEcouter extends Thread {
           String ip = inetAddress.getHostAddress();
           this.serveur.sendInfo(
               "L'adresse ip du serveur est: " + ip,
-              clientSocket
-            );
+              clientSocket);
         }
         // salon pour générer le nom
-        else if (
-          msg.matches(".* : /username .*") && salonActuel.equals("Config")
-        ) {
+        else if (msg.matches(".* : /username .*") && salonActuel.equals("Config")) {
           String username = this.getUsernameMess(msg);
           // Si le username n'est pas déjà utilisé dans les sessions du serveur
           if (this.serveur.isUsernameUsed(username) || username.equals("")) {
             this.serveur.sendInfo(
                 "Ce nom d'utilisateur est déjà utilisé",
-                clientSocket
-              );
+                clientSocket);
           } else {
             this.serveur.getSession(clientSocket).setNom(username);
             this.serveur.sendInfo("Bienvenue " + username, clientSocket);
           }
+        } else if (msg.matches(".* : /msg .*")) {
+          this.serveur.sendTo(
+              this.clientSocket,
+              this.getMsg(msg),
+              this.getDestinataire(msg));
         } else if (msg.matches(".* : /help") && salonActuel.equals("Config")) {
           this.serveur.sendInfo("Liste des commandes : ", clientSocket);
           this.serveur.sendInfo(
               "/salons : Afficher la liste des salons",
-              clientSocket
-            );
+              clientSocket);
           this.serveur.sendInfo(
               "/salon <nomSalon> : Rejoindre un salon",
-              clientSocket
-            );
+              clientSocket);
           this.serveur.sendInfo(
               "/createsalon <nomSalon> : Créer un salon",
-              clientSocket
-            );
+              clientSocket);
           this.serveur.sendInfo(
               "/deletesalon <nomSalon> : Supprimer un salon",
-              clientSocket
-            );
+              clientSocket);
           this.serveur.sendInfo("/quit : Quitter le serveur", clientSocket);
           this.serveur.sendInfo(
               "/ip : Afficher l'adresse ip du serveur",
-              clientSocket
-            );
+              clientSocket);
+          this.serveur.sendInfo( "/msg <destinataire> <message> : Envoyer un message privé", clientSocket);
         }
         // si le message n'est pas une commande
         else {
@@ -170,6 +165,28 @@ public class ServeurEcouter extends Thread {
         e1.printStackTrace();
       }
     }
+  }
+
+  /**
+   * Récupère le destinataire du message privé
+   * @param msg2 {String} Le message
+   * @return {String} Le destinataire
+   */
+  private String getDestinataire(String msg2) {
+    int startIndex = msg2.indexOf("msg") + 4;
+    msg2 = msg2.substring(startIndex, msg2.length());
+    int firstSpaceIndex = msg2.indexOf(" ");
+    return msg2.substring(0, firstSpaceIndex);
+  }
+
+  /**
+   * Récupère le msessage privé à envoyer
+   * @param msg2 {String} Le message
+   * @return {String} Le message privé
+   */
+  private String getMsg(String msg2) {
+    int startIndex = msg2.indexOf("msg") + 1;
+    return msg2.substring(startIndex, msg2.length());
   }
 
   /**

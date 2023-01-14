@@ -13,6 +13,8 @@ public class ServeurEnvoie extends Thread {
   private Socket envoyeur;
   private String all;
   private Salon salon;
+  private Session destinataire;
+  private Serveur serveur;
 
   /**
    * Constructeur de la classe ServeurEnvoie si il veut envoyer le message à tous le monde
@@ -29,6 +31,7 @@ public class ServeurEnvoie extends Thread {
     String salon,
     String all
   ) {
+    this.serveur = serveur;
     this.clients = serveur.getClients();
     this.message = message;
     this.envoyeur = envoyeur;
@@ -36,17 +39,54 @@ public class ServeurEnvoie extends Thread {
     this.salon = serveur.getSalon(salon);
   }
 
+  /**
+   * Constructeur de la classe ServeurEnvoie si il veut envoyer le message à un socket précis
+   * @param serveur {Serveur} Le serveur
+   * @param message {String} Le message à envoyer
+   * @param all {String} Si il faut envoyer à tous "all", à l'envoyeur "info", à un socket précis "to"
+   * @param envoyeur {Socket} Le socket de l'envoyeur
+   * @param destinataie {String} Le nom du destinataire
+   */
+  public ServeurEnvoie(
+    Serveur serveur,
+    String message,
+    String all,
+    Socket envoyeur,
+    String destinataie
+  ) {
+    this.serveur = serveur;
+    this.clients = serveur.getClients();
+    this.message = message;
+    this.envoyeur = envoyeur;
+    this.all = all;
+    this.salon = null;
+    this.destinataire = serveur.getSessionString(destinataie);
+  }
+
   @Override
   public void run() {
     if (message != null) {
       if (this.all.equals("all")) {
         this.sendAll();
-      }
-      if (this.all.equals("info")) {
+      } else if (this.all.equals("info")) {
         this.sendInfo();
+      } else if (this.all.equals("to")) {
+        this.sendTo();
       }
       // Réinitialisation de la variable de message
       message = null;
+    }
+  }
+
+  /**
+   * Envoie un message privé
+   */
+  private void sendTo() {
+    if (this.destinataire == null) {
+      this.message = "Le destinataire n'existe pas";
+      this.sendInfo();
+    } else {
+      this.destinataire.sendToMe("from " + this.serveur.getSession(envoyeur).getNom() + " -> " + this.message);
     }
   }
 

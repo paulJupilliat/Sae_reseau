@@ -174,11 +174,12 @@ public class Serveur {
    */
   public boolean isUsernameUsed(String username) {
     ServeurGestSalon verif = new ServeurGestSalon(
-        username,
-        null,
-        null,
-        this,
-        "verif");
+      username,
+      null,
+      null,
+      this,
+      "verif"
+    );
     verif.start();
     try {
       verif.join();
@@ -187,7 +188,7 @@ public class Serveur {
     }
     return verif.isUsed();
   }
-  
+
   public void deco(Socket client, String salon) {
     ServeurGestSalon deco = new ServeurGestSalon(
         null,
@@ -196,5 +197,44 @@ public class Serveur {
         this,
         "deco");
     deco.start();
+  }
+
+  /**
+   * Lance un thread qui envoie un message à un client
+   * @param clientSocket Le socket du client
+   * @param msg Le message à envoyer
+   * @param destinataire Le nom d'utilisateur du destinataire
+   */
+  public void sendTo(Socket clientSocket, String msg, String destinataire) {
+    ServeurEnvoie serveurEnvoie = new ServeurEnvoie(
+      this,
+      msg,
+      "to",
+      clientSocket,
+      destinataire
+    );
+    serveurEnvoie.start();
+  }
+
+  /**
+   * Récupère une session à partir d'un nom d'utilisateur
+   * @param destinataie Le nom d'utilisateur
+   * @return La session du client
+   */
+  public Session getSessionString(String destinataie) {
+    ServeurGestSalon find = new ServeurGestSalon(
+      destinataie,
+      null,
+      null,
+      this,
+      "find"
+    );
+    find.start();
+    try {
+      find.join();
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    return find.getSession();
   }
 }

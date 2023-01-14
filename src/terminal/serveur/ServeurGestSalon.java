@@ -13,6 +13,7 @@ public class ServeurGestSalon extends Thread {
   private Serveur serveur;
   private String action;
   private boolean used;
+  private Session session;
 
   public ServeurGestSalon(
     String newSalon,
@@ -64,29 +65,59 @@ public class ServeurGestSalon extends Thread {
       this.deleteSalon();
     } else if (this.action.equals("verif")) {
       this.used = this.verifUser();
-    }
-    else if (this.action.equals("deco")) {
+    } else if (this.action.equals("deco")) {
       this.deco();
+    } else if (this.action.equals("find")) {
+      this.findSession();
     }
   }
 
+  /**
+   * Retrouve une session à partir d'un string
+   */
+  private void findSession() {
+    for (Session session : this.serveur.getClients()) {
+      if (session.getNom().equals(this.nomNewSalon)) {
+        this.session = session;
+      }
+    }
+  }
+  
+  /**
+   * Retourne la session recherchée
+   * @return La session recherchée
+   */
+  public Session getSession() {
+    return this.session;
+  }
+
+  /**
+   * Déconnecte un client
+   */
   private void deco() {
     this.oldSalon.deco(client);
     Session session = this.serveur.getSession(client);
     this.serveur.getClients().remove(session);
   }
 
+  /**
+   * Verifie si un user est déjà connecté
+   * @return true si le user est déjà connecté
+   */
   private boolean verifUser() {
     for (Session client : this.serveur.getClients()) {
       if (client.getNom().equals(this.nomNewSalon)) {
-          this.used = true;
-          return true;
+        this.used = true;
+        return true;
       }
     }
     this.used = false;
     return false;
   }
 
+  /**
+   * Supprime un salon si il est vide
+   */
   private void deleteSalon() {
     if (this.newSalon == null) {
       this.sendInfo("Le salon n'existe pas");
@@ -100,12 +131,15 @@ public class ServeurGestSalon extends Thread {
 
   /**
    * Regarde si le nom d'un user est déjà pris
-   * @return
+   * @return true si le nom est déjà pris
    */
   public boolean isUsed() {
     return this.used;
   }
 
+  /**
+   * Creer un nouveau salon si le nom nest pas déjà pris et connecte le client à se nnouveau 
+   */
   private void createSalon() {
     Salon nvSalon = new Salon(
       this.nomNewSalon,
@@ -135,10 +169,12 @@ public class ServeurGestSalon extends Thread {
    */
   private void sendConfirmation() {
     this.sendInfo(
-        "serveur : Vous avez rejoint le salon #" + this.newSalon.getNom()
-      );
+        "serveur : Vous avez rejoint le salon #" + this.newSalon.getNom());
   }
 
+  /**
+   * Permet de rejoindre un salon
+   */
   public void joinSalon() {
     // Si les salons n'existent pas
     if (this.newSalon == null) {
