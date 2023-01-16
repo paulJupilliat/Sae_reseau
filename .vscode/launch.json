@@ -5,6 +5,7 @@
         "type": "java",
         "name": "Launch ClientIHM",
         "request": "launch",
+        "vmArgs": "--module-path C:/Users/benja/Downloads/javafx-sdk-19/lib  --add-modules javafx.controls,javafx.fxml",
         "mainClass": "ihm.ClientIHM",
         "projectName": "Sae_reseau_d1b04c0c"
     },

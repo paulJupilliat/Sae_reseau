@@ -22,7 +22,7 @@ Pour lancer ce projet, vous devez installer java et javaFX.
 Lancer le serveur avec la commande suivante :
 
 ```bash
-java -jar Server.jar
+java -jar Serveur.jar
 ```
 
 Sur un autre terminal, lancer le client avec la commande suivante :
