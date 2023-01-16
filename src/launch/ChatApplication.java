@@ -4,7 +4,9 @@ import ihm.ClientIHM;
 import ihm.controlleur.ButtonCloseControlleur;
 import ihm.controlleur.ButtonControlleur;
 import java.lang.ModuleLayer.Controller;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -13,6 +15,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -27,11 +30,13 @@ public class ChatApplication extends Application {
   private HBox hBox;
   private Button buttonNewSalon;
   private Button btnAllSallon;
+  private Button btnMessPvr;
   private ClientIHM client;
   private String salonsTextBrut; //tous les salons reçus
   private List<String> listSalons; //tous les salons reçus
   private Text salonActuel;
   private Text username;
+  private Map<String, String> messPvr; // username -> messages privés avec la personne
 
   @Override
   public void start(Stage primaryStage) throws Exception {
@@ -40,6 +45,7 @@ public class ChatApplication extends Application {
     Scene scene = new Scene(root, 400, 400);
     primaryStage.setScene(scene);
     primaryStage.show();
+    this.messPvr = new HashMap<String, String>();
     this.salonActuel = new Text(); //nom du salon courant
     this.textArea = new TextArea();
     this.textField = new TextField();
@@ -116,18 +122,34 @@ public class ChatApplication extends Application {
   public void topMenu() {
     HBox topMenu = new HBox();
     this.buttonNewSalon = new Button("Nouveau salon");
+    this.btnMessPvr = new Button("Messages privés");
     this.buttonNewSalon.setOnAction(
-        new ButtonControlleur(this, "NewSalonAsk", client)
-      );
+        new ButtonControlleur(this, "NewSalonAsk", client));
     this.btnAllSallon = new Button("Tous les salons");
     this.btnAllSallon.setOnAction(
-        new ButtonControlleur(this, "AllSalon", client)
-      );
+        new ButtonControlleur(this, "AllSalon", client));
+    this.btnMessPvr.setOnAction(new ButtonControlleur(this, "MessPvr", client));
+
     // Met en à droite le nom du salon courant
     topMenu
-      .getChildren()
-      .addAll(this.buttonNewSalon, this.btnAllSallon, this.salonActuel);
+        .getChildren()
+        .addAll(this.buttonNewSalon, this.btnAllSallon, this.salonActuel, this.btnMessPvr);
     this.root.setTop(topMenu);
+  }
+
+  private Map<String, String> getMessPvr() {
+    return this.messPvr;
+  }
+
+  private void showMessPvr() {
+    GridPane grid = new GridPane();
+    int i = 0;
+    for (String username : this.messPvr.keySet()) {
+      Button btn = new Button(username);
+      btn.setOnAction(new ButtonControlleur(this, "ShowMessPvr", client, username));
+      grid.add(btn, 0, i);
+      i++;
+    }
   }
 
   /**

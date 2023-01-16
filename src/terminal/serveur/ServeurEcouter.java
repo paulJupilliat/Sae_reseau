@@ -116,10 +116,15 @@ public class ServeurEcouter extends Thread {
             this.serveur.sendInfo("Bienvenue " + username, clientSocket);
           }
         } else if (msg.matches(".* : /msg .*")) {
+          try{
           this.serveur.sendTo(
               this.clientSocket,
               this.getMsg(msg),
               this.getDestinataire(msg));
+          }
+          catch(Exception e){
+            this.serveur.sendInfo("Erreur : /msg <destinataire> <message>", clientSocket);
+          }
         } else if (msg.matches(".* : /help")) {
           this.serveur.sendInfo("Liste des commandes : ", clientSocket);
           this.serveur.sendInfo(
@@ -177,7 +182,7 @@ public class ServeurEcouter extends Thread {
    * @return {String} Le message privé
    */
   private String getMsg(String msg2) {
-    int startIndex = msg2.indexOf("msg") + 1;
+    int startIndex = msg2.indexOf("msg") + 4 + this.getDestinataire(msg2).length() + 1;
     return msg2.substring(startIndex, msg2.length());
   }
 

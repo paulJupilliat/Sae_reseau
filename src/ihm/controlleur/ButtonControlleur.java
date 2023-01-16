@@ -64,7 +64,11 @@ public class ButtonControlleur implements EventHandler<ActionEvent> {
       
     } else if (action.equals("Username")) {
       this.client.sendMessage("/username " + this.data);
-    } else if (action.equals("ChangeIP")) {
+    }
+    else if (action.equals("MessPvr")) {
+      this.chatApplication.showMessPvr();
+    }
+    else if (action.equals("ChangeIP")) {
       try {
         this.chatApplication.setClient(
             new ClientIHM(this.data, 5001, this.chatApplication.getNomUser(), this.chatApplication)
