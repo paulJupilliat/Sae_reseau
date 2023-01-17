@@ -8,9 +8,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javafx.application.Application;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.collections.MapChangeListener;
+import javafx.collections.ObservableMap;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
@@ -37,20 +42,22 @@ public class ChatApplication extends Application {
   private Text salonActuel;
   private Text username;
   private Map<String, String> messPvr; // username -> messages privés avec la personne
+  private Text destinatairePvr; // destinataire des messages privés
 
   @Override
   public void start(Stage primaryStage) throws Exception {
+    this.messPvr = new HashMap<String, String>();
     // Creer une fentre avec un champs textuel et un bouton
     this.root = new BorderPane();
-    Scene scene = new Scene(root, 400, 400);
+    Scene scene = new Scene(root, 600, 400);
     primaryStage.setScene(scene);
     primaryStage.show();
-    this.messPvr = new HashMap<String, String>();
     this.salonActuel = new Text(); //nom du salon courant
     this.textArea = new TextArea();
     this.textField = new TextField();
     this.username = new Text("Anonyme");
     this.button = new Button("Envoyer");
+    this.destinatairePvr = new Text();
     boolean otherval = false;
     while (this.username.getText().equals("Anonyme")) {
       this.showChargement();
@@ -65,8 +72,6 @@ public class ChatApplication extends Application {
     }
     this.topMenu();
     this.setupChatMode();
-    this.button.setOnAction(new ButtonControlleur(this, "Envoyer", client));
-    this.textField.setOnAction(new ButtonControlleur(this, "Envoyer", client));
     primaryStage.setOnCloseRequest(new ButtonCloseControlleur(client));
   }
 
@@ -79,6 +84,9 @@ public class ChatApplication extends Application {
     this.hBox.setPadding(new Insets(10));
     this.hBox.setSpacing(10);
     this.textArea.setEditable(false);
+    this.button.setOnAction(new ButtonControlleur(this, "Envoyer", client));
+    this.textField.setOnAction(new ButtonControlleur(this, "Envoyer", client));
+    this.destinatairePvr.setText("");
   }
 
   /**
@@ -116,40 +124,93 @@ public class ChatApplication extends Application {
     this.root.setCenter(chargement);
   }
 
+  public Button getBtnMessPvr() {
+    return btnMessPvr;
+  }
+
+  public void setDestinatairePvr(String destinatairePvr) {
+    this.destinatairePvr.setText(destinatairePvr);
+  }
+
   /**
    * Affiche les boutons du menu
    */
   public void topMenu() {
     HBox topMenu = new HBox();
+    Button buttonHome = new Button("Home");
     this.buttonNewSalon = new Button("Nouveau salon");
     this.btnMessPvr = new Button("Messages privés");
+    buttonHome.setOnAction(new ButtonControlleur(this, "Home", client));
     this.buttonNewSalon.setOnAction(
-        new ButtonControlleur(this, "NewSalonAsk", client));
+        new ButtonControlleur(this, "NewSalonAsk", client)
+      );
     this.btnAllSallon = new Button("Tous les salons");
     this.btnAllSallon.setOnAction(
-        new ButtonControlleur(this, "AllSalon", client));
+        new ButtonControlleur(this, "AllSalon", client)
+      );
     this.btnMessPvr.setOnAction(new ButtonControlleur(this, "MessPvr", client));
+    // Mette de la marge entre les boutons
+    topMenu.setSpacing(10);
 
-    // Met en à droite le nom du salon courant
     topMenu
-        .getChildren()
-        .addAll(this.buttonNewSalon, this.btnAllSallon, this.salonActuel, this.btnMessPvr);
+      .getChildren()
+      .addAll(
+        buttonHome,
+        this.buttonNewSalon,
+        this.btnAllSallon,
+        this.btnMessPvr,
+        this.salonActuel,
+        this.username
+      );
     this.root.setTop(topMenu);
   }
 
-  private Map<String, String> getMessPvr() {
+  public Map<String, String> getMessPvr() {
     return this.messPvr;
   }
 
-  private void showMessPvr() {
+  /**
+   * Affiche les personnes avec qui on a des messages privés
+   */
+  public void showMessPvr() {
     GridPane grid = new GridPane();
-    int i = 0;
-    for (String username : this.messPvr.keySet()) {
-      Button btn = new Button(username);
-      btn.setOnAction(new ButtonControlleur(this, "ShowMessPvr", client, username));
-      grid.add(btn, 0, i);
-      i++;
+    int x = 0;
+    int y = 0;
+    for (String user : this.client.getAllUsers()) {
+      Button btn = new Button(user);
+      btn.setOnAction(new ButtonControlleur(this, "MessPvrWith", client, user));
+      x++;
+      if (x == 5) {
+        x = 0;
+        y++;
+      }
+      grid.add(btn, 0, x);
     }
+    root.setCenter(grid);
+  }
+
+  /**
+   * Affiche les messages privés avec une personne
+   * @param username nom de la personne
+   */
+  public void showMessPvrWith(String username) {
+    VBox vbox = new VBox();
+    this.destinatairePvr = new Text(username);
+    if (!this.messPvr.containsKey(username)) {
+      this.messPvr.put(username, "");
+    }
+    TextArea chat = new TextArea(this.messPvr.get(username));
+    // clear les setOnAction de button
+    this.button.setOnAction(null);
+    this.textField.setOnAction(null);
+    this.button.setOnAction(
+        new ButtonControlleur(this, "EnvoyerPvr", client, username)
+      );
+    this.textField.setOnAction(
+        new ButtonControlleur(this, "EnvoyerPvr", client, username)
+      );
+    vbox.getChildren().addAll(this.destinatairePvr, chat);
+    this.root.setCenter(vbox);
   }
 
   /**
@@ -185,6 +246,10 @@ public class ChatApplication extends Application {
 
   public TextArea getTextArea() {
     return textArea;
+  }
+
+  public Text getDestinatairePvr() {
+    return destinatairePvr;
   }
 
   /**
@@ -239,5 +304,18 @@ public class ChatApplication extends Application {
 
   public static void main(String[] args) {
     launch(args);
+  }
+
+  /**
+   * Ajoute un message privé dans la liste des messages privés
+   * @param msg2 message à ajouter
+   * @param username nom de la personne avec qui on a le message
+   */
+  public void addPvrMessage(String msg2, String username) {
+    if (this.messPvr.containsKey(username)) {
+      this.messPvr.put(username, this.messPvr.get(username) + msg2 + "\n");
+    } else {
+      this.messPvr.put(username, msg2 + "\n");
+    }
   }
 }

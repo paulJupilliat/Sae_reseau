@@ -6,6 +6,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import terminal.serveur.ChatPrive;
 import terminal.serveur.Salon;
 import terminal.serveur.ServeurEnvoie;
 import terminal.serveur.ServeurGestSalon;
@@ -16,6 +18,7 @@ public class Serveur {
   private boolean quit = false;
   private final List<Session> clients;
   private List<Salon> salons;
+  private List<ChatPrive> chatPrives;
 
   public Serveur(int port) {
     this.clients = new ArrayList<>();
@@ -38,11 +41,12 @@ public class Serveur {
    */
   public void sendAll(String message, Socket envoyeur, String salon) {
     ServeurEnvoie serveurEnvoie = new ServeurEnvoie(
-        this,
-        message,
-        envoyeur,
-        salon,
-        "all");
+      this,
+      message,
+      envoyeur,
+      salon,
+      "all"
+    );
     serveurEnvoie.start();
   }
 
@@ -54,11 +58,12 @@ public class Serveur {
    */
   public void sendInfo(String msg, Socket socket) {
     ServeurEnvoie serveurEnvoie = new ServeurEnvoie(
-        this,
-        msg,
-        socket,
-        null,
-        "info");
+      this,
+      msg,
+      socket,
+      null,
+      "info"
+    );
     serveurEnvoie.start();
   }
 
@@ -73,8 +78,63 @@ public class Serveur {
     }
   }
 
+  /**
+   * Donne les chats privés
+   */
+  public List<ChatPrive> getChatPrives() {
+    return this.chatPrives;
+  }
+
+  /**
+   * Fait un thread qui dit si un chat privée entre ces deux personnes existe
+   * @param nom une des deux personnes
+   * @param nom2 l'autre personne
+   * @return si le chat existe
+   */
+  public boolean chatExist(String nom, String nom2) {
+    AtomicReference<Boolean> res = new AtomicReference<>(false);
+    Thread thread = new Thread(
+      () -> {
+        if (this.chatPrives == null) {
+          return;
+        }
+        for (ChatPrive chat : this.chatPrives) {
+          if ((chat.userIn(nom) && chat.userIn(nom2))) {
+            res.set(true);
+          }
+        }
+      }
+    );
+    thread.start();
+    try {
+      thread.join();
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    return res.get();
+  }
+
   public List<Session> getClients() {
     return this.clients;
+  }
+
+  public String getAllUsername() {
+    AtomicReference<String> res = new AtomicReference<>("");
+    Thread thread = new Thread(
+      () -> {
+          for (Session client : this.clients) {
+            res.set(res + client.getNom() + ",");
+          }
+        res.set(res + "]");
+      }
+    );
+    thread.start();
+    try {
+      thread.join();
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    return res.get();
   }
 
   public List<Salon> getSalons() {
@@ -83,21 +143,23 @@ public class Serveur {
 
   public void createSalon(String nom, Socket client) {
     ServeurGestSalon creation = new ServeurGestSalon(
-        nom,
-        nom,
-        client,
-        this,
-        "create");
+      nom,
+      nom,
+      client,
+      this,
+      "create"
+    );
     creation.start();
   }
 
   public void deleteSalon(String nom, Socket client) {
     ServeurGestSalon suppression = new ServeurGestSalon(
-        nom,
-        nom,
-        client,
-        this,
-        "delete");
+      nom,
+      nom,
+      client,
+      this,
+      "delete"
+    );
     suppression.start();
   }
 
@@ -135,11 +197,12 @@ public class Serveur {
    */
   public void changeSalon(Socket client, String oldSalon, String newSalon) {
     ServeurGestSalon ajouteur = new ServeurGestSalon(
-        newSalon,
-        oldSalon,
-        client,
-        this,
-        "change");
+      newSalon,
+      oldSalon,
+      client,
+      this,
+      "change"
+    );
     ajouteur.start();
   }
 
@@ -149,12 +212,23 @@ public class Serveur {
    * @return La session du client
    */
   public Session getSession(Socket client) {
-    for (Session session : this.clients) {
-      if (session.getSocket() == client) {
-        return session;
+    AtomicReference<Session> res = new AtomicReference<>();
+    Thread thread = new Thread(
+      () -> {
+        for (Session session : this.clients) {
+          if (session.getSocket().equals(client)) {
+            res.set(session);
+          }
+        }
       }
+    );
+    thread.start();
+    try {
+      thread.join();
+    } catch (InterruptedException e) {
+      e.printStackTrace();
     }
-    return null;
+    return res.get();
   }
 
   public static void main(String[] test) {
@@ -169,11 +243,12 @@ public class Serveur {
    */
   public boolean isUsernameUsed(String username) {
     ServeurGestSalon verif = new ServeurGestSalon(
-        username,
-        null,
-        null,
-        this,
-        "verif");
+      username,
+      null,
+      null,
+      this,
+      "verif"
+    );
     verif.start();
     try {
       verif.join();
@@ -185,11 +260,12 @@ public class Serveur {
 
   public void deco(Socket client, String salon) {
     ServeurGestSalon deco = new ServeurGestSalon(
-        null,
-        salon,
-        client,
-        this,
-        "deco");
+      null,
+      salon,
+      client,
+      this,
+      "deco"
+    );
     deco.start();
   }
 
@@ -201,11 +277,12 @@ public class Serveur {
    */
   public void sendTo(Socket clientSocket, String msg, String destinataire) {
     ServeurEnvoie serveurEnvoie = new ServeurEnvoie(
-        this,
-        msg,
-        "to",
-        clientSocket,
-        destinataire);
+      this,
+      msg,
+      "to",
+      clientSocket,
+      destinataire
+    );
     serveurEnvoie.start();
   }
 
@@ -216,11 +293,12 @@ public class Serveur {
    */
   public Session getSessionString(String destinataie) {
     ServeurGestSalon find = new ServeurGestSalon(
-        destinataie,
-        null,
-        null,
-        this,
-        "find");
+      destinataie,
+      null,
+      null,
+      this,
+      "find"
+    );
     find.start();
     try {
       find.join();
@@ -229,5 +307,23 @@ public class Serveur {
     }
     return find.getSession();
   }
-}
 
+  public void setChatPrives(List<ChatPrive> chatPrives2) {
+    this.chatPrives = chatPrives2;
+  }
+
+  /**
+   * Récupère un chat privé à partir de deux noms d'utilisateur
+   * @param destinataire Le nom d'utilisateur du destinataire
+   * @param envoyeur Le nom d'utilisateur de l'envoyeur
+   * @return Le chat privé
+   */
+  public ChatPrive getChatPriveName(String destinataire, String envoyeur) {
+    for (ChatPrive chat : this.chatPrives) {
+      if (chat.userIn(destinataire) && chat.userIn(envoyeur)) {
+        return chat;
+      }
+    }
+    return null;
+  }
+}

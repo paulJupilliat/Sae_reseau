@@ -7,6 +7,14 @@
   - [About ](#about-)
   - [Getting Started ](#getting-started-)
   - [Usage ](#usage-)
+  - [Fonctionnalities ](#fonctionnalities-)
+    - [Ip inconnue](#ip-inconnue)
+    - [Nom d'utilisateur](#nom-dutilisateur)
+    - [Salon Général](#salon-général)
+    - [Home](#home)
+    - [new salon](#new-salon)
+    - [Tous les salons](#tous-les-salons)
+    - [Message privé](#message-privé)
   - [Contributing ](#contributing-)
 
 ## About <a name = "about"></a>
@@ -33,9 +41,34 @@ java --module-path "{JAVAFX_DIR}\lib" --add-modules javafx.controls,javafx.fxml 
 
 Une fois le client lancé, vous pouvez vous connecter avec un pseudo. Et utiliser la commande /help pour voir les commandes disponibles.
 Pour ce connecter sur un autre ordinateur sur le même réseau, lancer <code> /ip </code> pour avoir l'adresse ip du serveur.   
-Ensuite, lancer le client sur l'autre ordinateur et quand l'adresse ip est demandée, entrer l'adresse ip obtenue grâce au client local.   
+Ensuite, lancer le client sur l'autre ordinateur et quand l'adresse ip est demandée, entrer l'adresse ip obtenue grâce au client local.
 
 Vous pouvez maintenant découvrir le chat.
+
+## Fonctionnalities <a name = "fonctionnali"></a>
+### Ip inconnue
+Si le client n'arrive 
+### Nom d'utilisateur
+Le nom d'utilisateur est unique. Si un utilisateur tente de se connecter avec un nom déjà utilisé, il lui est demandé d'en choisir un autre.
+
+### Salon Général
+Ce salon permet de discuter avec tous les utilisateurs connectés. Il est accessible par défaut.Et envoie le message à tous les autres salons.
+
+### Home
+Quand clique sur le bouton home, on revient en mode chat salon.
+
+### new salon
+Quand appui sur bouton "nouveau salon", on saisie le nom du salon que l'on veut créer. Si il n'est pas déjà pris cela le créer et on est ajouté dedans et déconnecté de l'ancien salon.
+
+### Tous les salons
+Quand appui sur bouton "tous les salons", on peut voir tous les salons existants. On peut cliquer sur un salon pour y accéder.
+
+### Message privé
+Pour envoyer le premier message privé à une personne faire <code> /msg {pseudo} {message} </code>. 
+La personne reçois un message le bouton message privé devient rouge. Trouver la personne qui à unvoyé un message en en cliquant sur le nom.
+Pour répondre utiliser le textField du bas.
+
+- To Do: Faire en sorte que les messages privéee soit visiible sans rechager le chat privé.
 
 ## Contributing <a name = "contributor"></a>
 Paul JUPILLIAT

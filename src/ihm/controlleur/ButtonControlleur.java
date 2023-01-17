@@ -42,9 +42,17 @@ public class ButtonControlleur implements EventHandler<ActionEvent> {
   public void handle(ActionEvent event) {
     if (action.equals("Envoyer")) {
       String message = chatApplication.getTextField().getText();
-      chatApplication.getTextArea().appendText(message + "\n");
+      chatApplication.putNewMessage(message, "black");
       chatApplication.getTextField().clear();
       client.sendMessage(message);
+    }
+    else if (action.equals("EnvoyerPvr")) {
+      String message = chatApplication.getTextField().getText();
+      chatApplication.putNewMessage(message, "black");
+      chatApplication.getTextField().clear();
+      String destinaire = chatApplication.getDestinatairePvr().getText();
+      client.sendMessage("/msg " + destinaire + " " + message);
+      this.chatApplication.addPvrMessage(message, destinaire);
     }
     else if (action.equals("Close")) {
       this.client.sendMessage("/quit");
@@ -65,8 +73,19 @@ public class ButtonControlleur implements EventHandler<ActionEvent> {
     } else if (action.equals("Username")) {
       this.client.sendMessage("/username " + this.data);
     }
+    else if (action.equals("addMessPvr")) {
+      this.chatApplication.showMessPvrWith(this.chatApplication.getDestinatairePvr().getText());
+    }
     else if (action.equals("MessPvr")) {
       this.chatApplication.showMessPvr();
+      this.chatApplication.getBtnMessPvr().setStyle("-fx-background-color: #f5f5f5;");
+    }
+    else if (action.equals("MessPvrWith")) {
+      this.chatApplication.showMessPvrWith(this.data);
+      this.chatApplication.setDestinatairePvr(this.data);
+    }
+    else if (action.equals("Home")) {
+      this.chatApplication.showChatMode();
     }
     else if (action.equals("ChangeIP")) {
       try {

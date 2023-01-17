@@ -23,8 +23,8 @@ public class ClientEnvoyerIHM extends Thread {
   }
   
   public void send(String msg) {
-      out.println("salon{" + this.client.getSalonActuel() + "} " + this.client.getNom() + " : " + msg);
-      out.flush();
+    out.println("salon{" + this.client.getSalonActuel() + "} " + this.client.getNom() + " : " + msg);
+    out.flush();
   }
 
   @Override
