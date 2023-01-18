@@ -2,6 +2,7 @@ package ihm;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 import java.util.Scanner;
 import launch.ChatApplication;
 import terminal.client.Client;
@@ -112,4 +113,20 @@ public class ClientIHM {
       e.printStackTrace();
     }
   }
+
+public List<String> getAllUsers() {
+  this.envoyer.send("/users");
+  while (this.recevoir.getUsers() == null) {
+    System.out.println("Waiting for users");
+    try {
+      this.chatApplication.showChargement();
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
+  List<String> users = this.recevoir.getUsers();
+  this.recevoir.setUsers(null);
+  return users;
+}
 }

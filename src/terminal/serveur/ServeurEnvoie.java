@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
-
 import launch.Serveur;
 
 public class ServeurEnvoie extends Thread {
@@ -22,6 +21,7 @@ public class ServeurEnvoie extends Thread {
    * @param clients {List<Session>} La liste des clients connectés
    * @param message {String} Le message à envoyer
    * @param envoyeur {Socket} Le socket de l'envoyeur
+   * @param salon {String} Le nom du salon
    * @param all {Strong} Si il faut envoyer à tous "all", à l'envoyeur "info", à un socket précis "to"
    */
   public ServeurEnvoie(
@@ -86,7 +86,12 @@ public class ServeurEnvoie extends Thread {
       this.message = "Le destinataire n'existe pas";
       this.sendInfo();
     } else {
-      this.destinataire.sendToMe("from " + this.serveur.getSession(envoyeur).getNom() + " -> " + this.message);
+      this.destinataire.sendToMe(
+          "from " +
+          this.serveur.getSession(envoyeur).getNom() +
+          " -> " +
+          this.message
+        );
     }
   }
 
@@ -99,7 +104,9 @@ public class ServeurEnvoie extends Thread {
       PrintWriter out = new PrintWriter(envoyeur.getOutputStream());
       out.println(message);
       out.flush();
-      System.out.println("Message envoyé à " + envoyeur.getInetAddress() + " : " + message);
+      System.out.println(
+        "Message envoyé à " + envoyeur.getInetAddress() + " : " + message
+      );
     } catch (IOException e) {
       e.printStackTrace();
     }
