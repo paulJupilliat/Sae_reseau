@@ -40,10 +40,13 @@ public class ClientRecevoirIHM extends Thread {
           this.client.setStep(2);
         } else if (msg.matches("from .* -> .*")) {
           this.addPvrMessage(this.getMessPvr(msg), this.getEnvoyeurPvr(msg));
+          this.client.getChatApplication()
+            .addNotif(this.getEnvoyeurPvr(msg));
           // met le bouton en rouge
           this.client.getChatApplication()
             .getBtnMessPvr()
-            .setStyle("-fx-background-color: red");
+              .setStyle("-fx-background-color: red");
+          
         } else if (msg.matches("users: .*")) {
           this.users = getUsersMess(msg);
         } else {

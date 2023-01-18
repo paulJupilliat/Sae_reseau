@@ -105,9 +105,13 @@ public class ServeurEcouter extends Thread {
               "L'adresse ip du serveur est: " + ip,
               clientSocket
             );
-        }
-        // salon pour générer le nom
-        else if (
+        } else if (msg.matches(".* : uptime")) {
+          Salon salon = this.serveur.getSalon(salonActuel);
+          this.serveur.sendInfo(
+              "Le serveur est en ligne depuis " + salon.getTime(),
+              clientSocket
+            );
+        } else if (
           msg.matches(".* : /username .*") && salonActuel.equals("Config")
         ) {
           String username = this.getUsernameMess(msg);
@@ -124,30 +128,29 @@ public class ServeurEcouter extends Thread {
         } else if (msg.matches(".* : /msg .*")) {
           try {
             String destinataire = this.getDestinataire(msg);
-            String envoyeur = this.getUsernameMess(msg);
-            if (this.serveur.chatExist(destinataire, envoyeur)) {
-              this.serveur.getChatPriveName(destinataire, envoyeur)
-                  .sendAll(this.getMsg(msg), clientSocket);
-            }
+            this.serveur.sendTo(this.clientSocket, this.getMsg(msg), destinataire);
           } catch (Exception e) {
             this.serveur.sendInfo(
-                "Erreur : /msg <destinataire> <message>",
-                clientSocket);
+                "Erreur : le destinataire n'existe pas",
+                clientSocket
+              );
           }
-        }
-        else if(msg.matches(".* : /users")) {
-          this.serveur.sendInfo("users: " + this.serveur.getAllUsername(), clientSocket);
-        }
-        else if (msg.matches(".* : /help")) {
+        } else if (msg.matches(".* : /users")) {
+          this.serveur.sendInfo(
+              "users: " + this.serveur.getAllUsername(),
+              clientSocket
+            );
+        } else if (msg.matches(".* : /help")) {
           this.serveur.sendInfo("Liste des commandes : ", clientSocket);
           this.serveur.sendInfo(
-              "/salons : Afficher la liste des salons" +
+              "/salons : Afficher la liste des salons (Affichage uniquement terminal)" +
               "\n/salon <nomSalon> : Rejoindre un salon" +
               "\n/createsalon <nomSalon> : Créer un salon" +
               "\n/deletesalon <nomSalon> : Supprimer un salon" +
               "\n/quit : Quitter le serveur" +
               "\n/ip : Afficher l'adresse ip du serveur" +
-              "\n/msg <destinataire> <message> : Envoyer un message privé",
+              "\n/msg <destinataire> <message> : Envoyer un message privé" +
+              "\n uptime : Afficher le d'existance d'un salon",
               clientSocket
             );
         }

@@ -9,12 +9,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import launch.Serveur;
 
 public class Salon {
-  protected String nom;
-  protected String description;
-  protected int nbMax;
-  protected int nbActuel;
-  protected List<Session> sessions;
-  protected Serveur serveur;
+  private String nom;
+  private String description;
+  private int nbMax;
+  private int nbActuel;
+  private List<Session> sessions;
+  private Serveur serveur;
+  private double startTime;
 
   public Salon(
     String nom,
@@ -29,6 +30,21 @@ public class Salon {
     this.nbActuel = nbActuel;
     this.sessions = new ArrayList<>();
     this.serveur = serveur;
+    this.startTime = System.currentTimeMillis();
+
+  }
+
+  /**
+   * Donne le temps que le salon à été crée
+   * @return le temps que le salon à été crée
+   */
+  public String getTime() {
+    double elapsedTime = System.currentTimeMillis() - this.startTime;
+    int hours = (int) (elapsedTime / (60 * 60 * 1000));
+    int minutes = (int) (elapsedTime / (60 * 1000)) % 60;
+    int seconds = (int) (elapsedTime / 1000) % 60;
+    return String.format("%d heure(s), %d minute(s) et %d seconde(s)", hours, minutes, seconds);
+
   }
 
   public void sendAll(String msg, Socket destinataire) {

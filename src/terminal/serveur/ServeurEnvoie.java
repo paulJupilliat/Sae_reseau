@@ -86,12 +86,7 @@ public class ServeurEnvoie extends Thread {
       this.message = "Le destinataire n'existe pas";
       this.sendInfo();
     } else {
-      this.destinataire.sendToMe(
-          "from " +
-          this.serveur.getSession(envoyeur).getNom() +
-          " -> " +
-          this.message
-        );
+      this.destinataire.sendToMe("from " + this.serveur.getSession(envoyeur).getNom() + " -> " + this.message);
     }
   }
 

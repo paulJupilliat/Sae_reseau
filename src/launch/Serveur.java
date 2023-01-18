@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-import terminal.serveur.ChatPrive;
 import terminal.serveur.Salon;
 import terminal.serveur.ServeurEnvoie;
 import terminal.serveur.ServeurGestSalon;
@@ -18,7 +17,6 @@ public class Serveur {
   private boolean quit = false;
   private final List<Session> clients;
   private List<Salon> salons;
-  private List<ChatPrive> chatPrives;
 
   public Serveur(int port) {
     this.clients = new ArrayList<>();
@@ -76,42 +74,6 @@ public class Serveur {
         e.printStackTrace();
       }
     }
-  }
-
-  /**
-   * Donne les chats privés
-   */
-  public List<ChatPrive> getChatPrives() {
-    return this.chatPrives;
-  }
-
-  /**
-   * Fait un thread qui dit si un chat privée entre ces deux personnes existe
-   * @param nom une des deux personnes
-   * @param nom2 l'autre personne
-   * @return si le chat existe
-   */
-  public boolean chatExist(String nom, String nom2) {
-    AtomicReference<Boolean> res = new AtomicReference<>(false);
-    Thread thread = new Thread(
-      () -> {
-        if (this.chatPrives == null) {
-          return;
-        }
-        for (ChatPrive chat : this.chatPrives) {
-          if ((chat.userIn(nom) && chat.userIn(nom2))) {
-            res.set(true);
-          }
-        }
-      }
-    );
-    thread.start();
-    try {
-      thread.join();
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-    return res.get();
   }
 
   public List<Session> getClients() {
@@ -308,22 +270,6 @@ public class Serveur {
     return find.getSession();
   }
 
-  public void setChatPrives(List<ChatPrive> chatPrives2) {
-    this.chatPrives = chatPrives2;
-  }
 
-  /**
-   * Récupère un chat privé à partir de deux noms d'utilisateur
-   * @param destinataire Le nom d'utilisateur du destinataire
-   * @param envoyeur Le nom d'utilisateur de l'envoyeur
-   * @return Le chat privé
-   */
-  public ChatPrive getChatPriveName(String destinataire, String envoyeur) {
-    for (ChatPrive chat : this.chatPrives) {
-      if (chat.userIn(destinataire) && chat.userIn(envoyeur)) {
-        return chat;
-      }
-    }
-    return null;
-  }
+ 
 }

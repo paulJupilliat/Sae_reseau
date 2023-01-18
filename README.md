@@ -14,7 +14,11 @@
     - [Home](#home)
     - [new salon](#new-salon)
     - [Tous les salons](#tous-les-salons)
+    - [Users connectés](#users-connectés)
     - [Message privé](#message-privé)
+    - [Uptime](#uptime)
+    - [Quit](#quit)
+    - [Help](#help)
   - [Contributing ](#contributing-)
 
 ## About <a name = "about"></a>
@@ -63,12 +67,26 @@ Quand appui sur bouton "nouveau salon", on saisie le nom du salon que l'on veut 
 ### Tous les salons
 Quand appui sur bouton "tous les salons", on peut voir tous les salons existants. On peut cliquer sur un salon pour y accéder.
 
+### Users connectés
+Quand oon appui sur le bouton "Messages privés", on peut voir tous les utilisateurs connectés. On peut cliquer sur un utilisateur pour lui envoyer un message privé.
+
 ### Message privé
-Pour envoyer le premier message privé à une personne faire <code> /msg {pseudo} {message} </code>. 
-La personne reçois un message le bouton message privé devient rouge. Trouver la personne qui à unvoyé un message en en cliquant sur le nom.
+Pour envoyer le premier message privé à une personne cliquer sur "Messages privés" puis sur le nom de l'utilisateur avec qui on veut discuter. 
+La personne reçois un message le bouton message privé devient rouge. Et le nom de la perssonne qui à envoyer aussi.
 Pour répondre utiliser le textField du bas.
 
 - To Do: Faire en sorte que les messages privéee soit visiible sans rechager le chat privé.
+
+### Uptime
+Permet de voir le temps qu'un salon existe.
+
+### Quit
+Quand on quitte le chat, par la croix ou par la commande <code> /quit </code>, on est déconnecté du serveur et on peut se reconnecter avec un autre pseudo (le pseudo actuel est libéré).
+
+### Help
+<code> /help </code> permet d'avoir la liste des commandes disponibles.
+
+
 
 ## Contributing <a name = "contributor"></a>
 Paul JUPILLIAT

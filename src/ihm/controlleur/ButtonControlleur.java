@@ -83,6 +83,7 @@ public class ButtonControlleur implements EventHandler<ActionEvent> {
     else if (action.equals("MessPvrWith")) {
       this.chatApplication.showMessPvrWith(this.data);
       this.chatApplication.setDestinatairePvr(this.data);
+      this.chatApplication.deleteNotif(this.data);
     }
     else if (action.equals("Home")) {
       this.chatApplication.showChatMode();

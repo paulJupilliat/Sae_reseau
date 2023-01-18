@@ -3,19 +3,13 @@ package launch;
 import ihm.ClientIHM;
 import ihm.controlleur.ButtonCloseControlleur;
 import ihm.controlleur.ButtonControlleur;
-import java.lang.ModuleLayer.Controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javafx.application.Application;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
-import javafx.collections.MapChangeListener;
-import javafx.collections.ObservableMap;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
@@ -25,7 +19,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import terminal.serveur.Salon;
 
 public class ChatApplication extends Application {
   private BorderPane root;
@@ -42,11 +35,13 @@ public class ChatApplication extends Application {
   private Text salonActuel;
   private Text username;
   private Map<String, String> messPvr; // username -> messages privés avec la personne
+  private Map<String, Boolean> messPvrRecus; // username -> si reçu nouveau message
   private Text destinatairePvr; // destinataire des messages privés
 
   @Override
   public void start(Stage primaryStage) throws Exception {
-    this.messPvr = new HashMap<String, String>();
+    this.messPvr = new HashMap<>();
+    this.messPvrRecus = new HashMap<>();
     // Creer une fentre avec un champs textuel et un bouton
     this.root = new BorderPane();
     Scene scene = new Scene(root, 600, 400);
@@ -84,8 +79,6 @@ public class ChatApplication extends Application {
     this.hBox.setPadding(new Insets(10));
     this.hBox.setSpacing(10);
     this.textArea.setEditable(false);
-    this.button.setOnAction(new ButtonControlleur(this, "Envoyer", client));
-    this.textField.setOnAction(new ButtonControlleur(this, "Envoyer", client));
     this.destinatairePvr.setText("");
   }
 
@@ -99,6 +92,8 @@ public class ChatApplication extends Application {
     this.root.setBottom(hBox);
     this.root.setCenter(textArea);
     this.salonActuel.setText("salon: " + this.client.getSalonActuel());
+    this.button.setOnAction(new ButtonControlleur(this, "Envoyer", client));
+    this.textField.setOnAction(new ButtonControlleur(this, "Envoyer", client));
   }
 
   public void askIp() {
@@ -117,6 +112,22 @@ public class ChatApplication extends Application {
 
   public void setClient(ClientIHM client) {
     this.client = client;
+  }
+
+  /**
+   * On à reçu un message de cette personne
+   * @param username nom de la personne
+   */
+  public void addNotif(String username) {
+    this.messPvrRecus.put(username, true);
+  }
+
+  /**
+   * On a lu le message de cette personne
+   * @param username nom de la personne
+   */
+  public void deleteNotif(String username) {
+    this.messPvrRecus.put(username, false);
   }
 
   public void showChargement() {
@@ -178,6 +189,9 @@ public class ChatApplication extends Application {
     int y = 0;
     for (String user : this.client.getAllUsers()) {
       Button btn = new Button(user);
+      if (Boolean.TRUE.equals(this.messPvrRecus.get(user))) {
+        btn.setStyle("-fx-background-color: #ff0000");
+      }
       btn.setOnAction(new ButtonControlleur(this, "MessPvrWith", client, user));
       x++;
       if (x == 5) {
