@@ -71,6 +71,15 @@ public class ServeurGestSalon extends Thread {
     } else if (this.action.equals("find")) {
       this.findSession();
     }
+    else if(this.action.equals("getChatPrives")) {
+      List<ChatPrive> chatPrives = new ArrayList<>();
+      for (Salon salon : this.salons) {
+        if (salon instanceof ChatPrive) {
+          chatPrives.add((ChatPrive) salon);
+        }
+      }
+      this.serveur.setChatPrives(chatPrives);
+    }
   }
 
   /**

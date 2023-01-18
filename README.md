@@ -20,6 +20,8 @@
     - [Quit](#quit)
     - [Help](#help)
   - [Contributing ](#contributing-)
+>>>>>>> 4d4517757a12f0c0e8d8c6a92d940fa96b0ae099
+  - [Contributing ](#contributing-)
 
 ## About <a name = "about"></a>
 

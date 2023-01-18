@@ -270,6 +270,4 @@ public class Serveur {
     return find.getSession();
   }
 
-
- 
 }
