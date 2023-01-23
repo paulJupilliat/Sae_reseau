@@ -1,3 +1,8 @@
+/**
+ * @file ServeurEnvoie.java
+ * @brief Classe qui permet d'envoyer un message
+ * @package terminal.serveur
+ */
 package terminal.serveur;
 
 import java.io.IOException;

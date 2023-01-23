@@ -1,3 +1,8 @@
+/**
+ * @file Client.java
+ * @brief Classe représentant un client
+ * @package terminal.client
+ */
 package terminal.client;
 import java.io.IOException;
 import java.net.Socket;
@@ -9,7 +14,12 @@ public class Client {
   private String salonActuel;
   private ClientEnvoyer envoyer;
   private ClientRecevoir recevoir;
-    
+  
+  /**
+   * Constructeur de la classe Client
+   * @param ip {String} L'adresse IP du serveur
+   * @param port {int} Le port du serveur
+   */
   public Client(String ip, int port) {
     try {
       clientSocket = new Socket(ip, port);
@@ -41,11 +51,15 @@ public class Client {
     return salonActuel;
   }
   
+
   public void setSalonActuel(String salonActuel) {
     this.salonActuel = salonActuel;
   }
   
-  // sendMessage
+  /**
+   * Envoie un message au serveur
+   * @param message {String} Le message à envoyer
+   */
   public void sendMessage(String message) {
     this.envoyer.send(message);
   }

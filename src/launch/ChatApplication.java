@@ -1,3 +1,8 @@
+/**
+ * @file ChatApplication.java
+ * @brief Classe permettant de lancer l'application de chat en JavaFX
+ * @package launch
+ */
 package launch;
 
 import ihm.ClientIHM;
@@ -7,14 +12,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javafx.application.Application;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
-import javafx.collections.MapChangeListener;
-import javafx.collections.ObservableMap;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
@@ -101,6 +101,9 @@ public class ChatApplication extends Application {
     this.textField.setOnAction(new ButtonControlleur(this, "Envoyer", client));
   }
 
+  /**
+   * Affiche fenêtre de demande de l'addresse IP
+   */
   public void askIp() {
     TextInputDialog dialog = new TextInputDialog();
     dialog.setTitle("Donnez l'adresse IP du serveur");
@@ -290,14 +293,18 @@ public class ChatApplication extends Application {
     dialog.setContentText("Entrez le nom du salon:");
     dialog.showAndWait();
     new ButtonControlleur(
-      this,
-      "NewSalon",
-      client,
-      dialog.getEditor().getText()
-    )
-    .handle(null);
+        this,
+        "NewSalon",
+        client,
+        dialog.getEditor().getText())
+        .handle(null);
   }
 
+  /**
+   * Pop up qui demande d'entré le nom d'utilisateur
+   * @param other si le nom d'utilisateur est déjà pris
+   * @return nom d'utilisateur
+   */
   public String popUpAskUsername(boolean other) {
     TextInputDialog dialog = new TextInputDialog();
     dialog.setTitle("Username");

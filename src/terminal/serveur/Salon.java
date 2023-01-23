@@ -1,3 +1,9 @@
+/**
+ * @file Salon.java
+ * @brief Classe représentant un salon
+ * @package terminal.serveur
+ */
+
 package terminal.serveur;
 
 import java.io.PrintWriter;
@@ -47,11 +53,16 @@ public class Salon {
 
   }
 
-  public void sendAll(String msg, Socket destinataire) {
+  /**
+   * Envoie un message à tous les utilisateurs du salon sauf l'envoyeur
+   * @param msg Le message à envoyer
+   * @param envoyeur Le socket de l'envoyeur
+   */
+  public void sendAll(String msg, Socket envoyeur) {
     ServeurEnvoie envoie = new ServeurEnvoie(
       this.serveur,
       msg,
-      destinataire,
+      envoyeur,
       this.nom,
       "all"
     );
@@ -124,6 +135,11 @@ public class Salon {
     return false;
   }
 
+  /**
+   * Envoie un message à un utilisateur du salon
+   * @param message Le message à envoyer
+   * @param socket Le socket de l'utilisateur à qui envoyer le message
+   */
   public void send(String message, Socket socket) {
     try {
       PrintWriter out = new PrintWriter(socket.getOutputStream());

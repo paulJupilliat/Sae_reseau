@@ -1,3 +1,8 @@
+/**
+ * @file Client.java
+ * @brief Classe représentant un client
+ * @package terminal.client
+ */
 package terminal.client;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,6 +19,11 @@ public class ClientRecevoir extends Thread {
   private final PrintWriter out;
   private final BufferedReader in;
 
+  /**
+   * Constructeur de la classe ClientRecevoir
+   * @param client {Client} Le client
+   * @throws IOException {IOException} Exception
+   */
   public ClientRecevoir(Client client) throws IOException {
     this.clientSocket = client.getClientSocket();
     this.client = client;

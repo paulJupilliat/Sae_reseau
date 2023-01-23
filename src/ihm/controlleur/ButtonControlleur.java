@@ -1,3 +1,8 @@
+/**
+ * @file ButtonControlleur.java
+ * @brief Classe permettant de gérer les boutons
+ * @package ihm.controlleur
+ */
 package ihm.controlleur;
 
 import ihm.ClientIHM;
@@ -14,6 +19,12 @@ public class ButtonControlleur implements EventHandler<ActionEvent> {
   private ModeleApp modele;
   private String data;
 
+  /**
+   * Constructeur de la classe ButtonControlleur
+   * @param chatApplication L'application ihm
+   * @param action L'action à effectuer
+   * @param client Le client
+   */
   public ButtonControlleur(
     ChatApplication chatApplication,
     String action,
@@ -25,6 +36,13 @@ public class ButtonControlleur implements EventHandler<ActionEvent> {
     this.modele = new ModeleApp(chatApplication, this);
   }
 
+  /**
+   * Constructeur de la classe ButtonControlleur avec data
+   * @param chatApplication L'application ihm
+   * @param action L'action à effectuer
+   * @param client Le client
+   * @param data Les données
+   */
   public ButtonControlleur(
     ChatApplication chatApplication,
     String action,
@@ -51,7 +69,7 @@ public class ButtonControlleur implements EventHandler<ActionEvent> {
       chatApplication.putNewMessage(message, "black");
       chatApplication.getTextField().clear();
       String destinaire = chatApplication.getDestinatairePvr().getText();
-      client.sendMessage("/msg " + destinaire + " " + message);
+      client.sendMessage("@" + destinaire + " " + message);
       this.chatApplication.addPvrMessage(message, destinaire);
     }
     else if (action.equals("Close")) {

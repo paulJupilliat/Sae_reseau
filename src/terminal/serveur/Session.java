@@ -1,3 +1,9 @@
+/**
+ * @file Session.java
+ * @brief Classe représentant une session
+ * @package terminal.serveur
+ */
+
 package terminal.serveur;
 
 import java.net.Socket;
@@ -34,6 +40,10 @@ public class Session {
     this.serveur.sendAll(msg, socket, null);
   }
 
+  /**
+   * Envoie un message à la personne qui a envoyé le message
+   * @param msg {String} Le message à envoyer
+   */
   public void sendToMe(String msg) {
     this.serveur.sendInfo(msg, socket);
   }

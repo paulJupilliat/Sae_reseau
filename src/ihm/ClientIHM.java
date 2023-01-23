@@ -1,11 +1,14 @@
+/**
+ * @file ClientIHM.java
+ * @brief Classe représantant le client en mode IHM
+ * @package ihm
+ */
 package ihm;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
-import java.util.Scanner;
 import launch.ChatApplication;
-import terminal.client.Client;
 import terminal.serveur.ExceptionSalon;
 
 public class ClientIHM {

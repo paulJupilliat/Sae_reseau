@@ -12,4 +12,5 @@
     "c:\\Program Files\\Java\\javafx-sdk-19\\lib\\javafx.swing.jar",
     "c:\\Program Files\\Java\\javafx-sdk-19\\lib\\javafx.web.jar"
     ],
+    "java.project.outputPath": "bin",
 }

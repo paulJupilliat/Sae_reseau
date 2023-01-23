@@ -1,9 +1,13 @@
+/**
+ * @file ClientEnvoyerIHM.java
+ * @brief Classe permettant d'envoyer les messages du client en mode IHM
+ * @package ihm
+ */
 package ihm;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.Socket;
 import java.util.Scanner;
 
 /*
@@ -15,6 +19,11 @@ public class ClientEnvoyerIHM extends Thread {
   private final PrintWriter out;
   private ClientIHM client;
 
+  /**
+   * Constructeur de la classe ClientEnvoyerIHM
+   * @param client {ClientIHM} Le client
+   * @throws IOException {IOException} Exception
+   */
   public ClientEnvoyerIHM(ClientIHM client) throws IOException {
     this.client = client;
     sc = new Scanner(System.in);

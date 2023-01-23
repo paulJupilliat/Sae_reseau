@@ -1,3 +1,8 @@
+/**
+ * @file ClientRecevoirIHM.java
+ * @brief Classe permettant de recevoir les messages du client
+ * @package ihm
+ */
 package ihm;
 
 import java.io.BufferedReader;
@@ -13,6 +18,11 @@ public class ClientRecevoirIHM extends Thread {
   private final BufferedReader in;
   private List<String> users;
 
+  /**
+   * Constructeur de la classe ClientRecevoirIHM
+   * @param client {ClientIHM} Le client
+   * @throws IOException {IOException} Exception
+   */
   public ClientRecevoirIHM(ClientIHM client) throws IOException {
     this.clientSocket = client.getClientSocket();
     this.client = client;

@@ -1,3 +1,8 @@
+/**
+ * @file ServeurEcouter.java
+ * @brief Classe qui permet d'écouter les messages d'un client
+ * @package terminal.serveur
+ */
 package terminal.serveur;
 
 import java.io.BufferedReader;
@@ -108,7 +113,7 @@ public class ServeurEcouter extends Thread {
         } else if (msg.matches(".* : uptime")) {
           Salon salon = this.serveur.getSalon(salonActuel);
           this.serveur.sendInfo(
-              "Le serveur est en ligne depuis " + salon.getTime(),
+              this.getSalon() + " est en ligne depuis " + salon.getTime(),
               clientSocket
             );
         } else if (
@@ -125,16 +130,25 @@ public class ServeurEcouter extends Thread {
             this.serveur.getSession(clientSocket).setNom(username);
             this.serveur.sendInfo("Bienvenue " + username, clientSocket);
           }
-        } else if (msg.matches(".* : /msg .*")) {
+        } else if (msg.matches(".* : @.*")) {
           try {
             String destinataire = this.getDestinataire(msg);
-            this.serveur.sendTo(this.clientSocket, this.getMsg(msg), destinataire);
+            this.serveur.sendTo(
+                this.clientSocket,
+                this.getMsg(msg),
+                destinataire
+              );
           } catch (Exception e) {
             this.serveur.sendInfo(
                 "Erreur : le destinataire n'existe pas",
                 clientSocket
               );
           }
+        } else if (msg.matches(".* : /nbuser")) {
+          this.serveur.sendInfo(
+              "Il y a " + this.serveur.getNbUser() + " utilisateurs connectés",
+              clientSocket
+            );
         } else if (msg.matches(".* : /users")) {
           this.serveur.sendInfo(
               "users: " + this.serveur.getAllUsername(),
@@ -149,7 +163,8 @@ public class ServeurEcouter extends Thread {
               "\n/deletesalon <nomSalon> : Supprimer un salon" +
               "\n/quit : Quitter le serveur" +
               "\n/ip : Afficher l'adresse ip du serveur" +
-              "\n/msg <destinataire> <message> : Envoyer un message privé" +
+              "\n@<destinataire> <message> : Envoyer un message privé" +
+              "\n/nbuser : Afficher le nombre d'utilisateur connecté" +
               "\n uptime : Afficher le d'existance d'un salon",
               clientSocket
             );
@@ -187,7 +202,7 @@ public class ServeurEcouter extends Thread {
    * @return {String} Le destinataire
    */
   private String getDestinataire(String msg2) throws Exception {
-    int startIndex = msg2.indexOf("msg") + 4;
+    int startIndex = msg2.indexOf("@") + 1;
     msg2 = msg2.substring(startIndex, msg2.length());
     int firstSpaceIndex = msg2.indexOf(" ");
     return msg2.substring(0, firstSpaceIndex);
@@ -200,7 +215,7 @@ public class ServeurEcouter extends Thread {
    */
   private String getMsg(String msg2) throws Exception {
     int startIndex =
-      msg2.indexOf("msg") + 4 + this.getDestinataire(msg2).length() + 1;
+      msg2.indexOf("@") + 1 + this.getDestinataire(msg2).length() + 1;
     return msg2.substring(startIndex, msg2.length());
   }
 

@@ -1,3 +1,8 @@
+/**
+ * @file Serveur.java
+ * @brief Classe représentant le serveur
+ * @package launch
+ */
 package launch;
 
 import java.io.IOException;
@@ -18,11 +23,17 @@ public class Serveur {
   private final List<Session> clients;
   private List<Salon> salons;
 
+  /**
+   * Constructeur de la classe Serveur
+   * @param port {int} Le port sur lequel le serveur va écouter
+   */
   public Serveur(int port) {
     this.clients = new ArrayList<>();
     Salon general = new Salon("General", "Salon général", 100, 0, this);
     Salon config = new Salon("Config", "Salon de configuration", 100, 0, this);
-    this.salons = new ArrayList<>(Arrays.asList(config, general));
+    Salon chanel1 = new Salon("Chanel1", "Salon Chanel 1", 100, 0, this);
+    Salon chanel2 = new Salon("Chanel2", "Salon Chanel 2", 100, 0, this);
+    this.salons = new ArrayList<>(Arrays.asList(config, general, chanel1, chanel2));
     try {
       serveurSocket = new ServerSocket(port);
       System.out.println("Serveur démarré");
@@ -56,22 +67,24 @@ public class Serveur {
    */
   public void sendInfo(String msg, Socket socket) {
     ServeurEnvoie serveurEnvoie = new ServeurEnvoie(
-      this,
-      msg,
-      socket,
-      null,
-      "info"
-    );
+        this,
+        msg,
+        socket,
+        null,
+        "info");
     serveurEnvoie.start();
   }
 
+  /**
+   * Démare le serveur
+   */
   public void launch() {
     while (!quit) {
       try {
         clients.add(new Session(serveurSocket.accept(), this));
         System.out.println("Client connecté");
       } catch (IOException e) {
-        e.printStackTrace();
+        System.out.println("Erreur lors de la connexion d'un client");
       }
     }
   }
@@ -80,6 +93,10 @@ public class Serveur {
     return this.clients;
   }
 
+  /**
+   * Récupère le nom de tous les clients connectés
+   * @return {String} Le nom de tous les clients connectés
+   */
   public String getAllUsername() {
     AtomicReference<String> res = new AtomicReference<>("");
     Thread thread = new Thread(
@@ -205,12 +222,11 @@ public class Serveur {
    */
   public boolean isUsernameUsed(String username) {
     ServeurGestSalon verif = new ServeurGestSalon(
-      username,
-      null,
-      null,
-      this,
-      "verif"
-    );
+        username,
+        null,
+        null,
+        this,
+        "verif");
     verif.start();
     try {
       verif.join();
@@ -220,6 +236,11 @@ public class Serveur {
     return verif.isUsed();
   }
 
+  /**
+   * Lance un thread qui gère la déconnexion d'un client
+   * @param client Le socket du client
+   * @param salon Le salon du client
+   */
   public void deco(Socket client, String salon) {
     ServeurGestSalon deco = new ServeurGestSalon(
       null,
@@ -268,6 +289,10 @@ public class Serveur {
       e.printStackTrace();
     }
     return find.getSession();
+  }
+
+  public String getNbUser() {
+    return String.valueOf(this.clients.size());
   }
 
 }
