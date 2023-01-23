@@ -19,6 +19,11 @@
     - [Uptime](#uptime)
     - [Quit](#quit)
     - [Help](#help)
+  - [Explication des fonctionnalitées](#explication-des-fonctionnalitées)
+    - [Username unique](#username-unique)
+    - [Saisie adresse ip](#saisie-adresse-ip)
+    - [Les boutons de l'ihm](#les-boutons-de-lihm)
+    - [Message privé](#message-privé-1)
   - [Explication du code ](#explication-du-code-)
     - [Le serveur](#le-serveur)
     - [Deco](#deco)
@@ -28,6 +33,7 @@
     - [ServeurGestSalon](#serveurgestsalon)
     - [ServeurEnvoie](#serveurenvoie)
     - [L'IHM](#lihm)
+    - [Le client](#le-client)
   - [Javadoc ](#javadoc-)
   - [Membres ](#membres-)
 
@@ -61,7 +67,7 @@ Vous pouvez maintenant découvrir le chat.
 
 ## Fonctionnalitées <a name = "fonctionnali"></a>
 ### <font color="red">Ip inconnue</font>
-Si le client n'arrive 
+On peut renseigner l'ip du serveur si elle n'est pas connu.
 
 ### <font color="red">Nom d'utilisateur</font>
 Le nom d'utilisateur est unique. Si un utilisateur tente de se connecter avec un nom déjà utilisé, il lui est demandé d'en choisir un autre.
@@ -99,6 +105,19 @@ Quand on quitte le chat, par la croix ou par la commande <code> /quit </code>, o
 ### <font color="red">Help</font>
 <code> /help </code> permet d'avoir la liste des commandes disponibles.
 
+## Explication des fonctionnalitées
+### <font color="red">Username unique</font>
+Quand un user lance son client, il se trouve dans le salon <code> config</code>. Quand un user fait la commande <code> /username nomUtilisateur </code> (cela ce fait automatiquement), le serveur renvoie si le nom est déjà pris par une personne connecté. Si il est déjà pris, une nouvelle pop up s'affiche demandant un nouveau username. <img src="./img/usernameagain.png"/>
+
+### <font color="red">Saisie adresse ip</font>
+Quand le client ce connect, il essaye de ce connecté à l'adresse ip localhost. Si sur cette adresse il n'y a pas le serveur, une pop demandant l'adresse ip du serveur est affiché et si on donne la bonne adresse la connexion au serveur ce fait.
+
+### <font color="red">Les boutons de l'ihm</font>
+Quand on clique sur les boutons de l'ihm, cela envoie la commande correspondant au serveur est attend le retour pour pouvoir afficher ce qu'il faut.
+
+### Message privé
+Les messages privés avec une personne sont stocké en cache chez les clients.
+
 ## Explication du code <a name = "explication"></a>
 ### Le serveur
 Un serveur demande pour être instancié un port.
@@ -114,7 +133,6 @@ Cette fonction lance un thread [ServeurGestSalon](#ServeurGestSalon) qui permet 
 ## Les messages
 Un message envoyé du client vers le serveur ressemble à ceci: <img src="./img/message.png" width=400 />.  
 Le serveur va traiter l'en-tête du message pour connaitre le nom d'utilisateur, le salon et l'action à effectuer(message est une commande ou un message).
-message.png  
 
 ## Session
 Une session demande pour être instanciée un socket et un serveur.   
@@ -134,6 +152,9 @@ Thread qui permet d'envoyer un message. Ce thread est instancié à chaque fois 
 
 ### L'IHM
 Les cliques sur les boutons de l'IHM envoie des commandes et le retour de cette commande est géré.
+
+### Le client
+Le client instancie 2 thread un pour écouter et un pour envoyé.
 
 ## Javadoc <a name = "javadoc"></a>
 La javadoc est disponible dans le dossier <code> docs </code> du projet. Pour la lancer il faut ouvrir le fichier <code> index.html </code> dans un navigateur.

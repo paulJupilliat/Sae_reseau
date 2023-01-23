@@ -40,7 +40,9 @@ public class ClientRecevoirIHM extends Thread {
           this.client.setSalonActuel(
               msg.substring(msg.indexOf("#") + 1, msg.length())
             );
-          this.afficherMessage("\n" + msg);
+          if (!this.client.getSalonActuel().equals("Config")) {
+            this.afficherMessage("\n" + msg);
+          }
           this.client.setStep(1);
         } else if (msg.indexOf("| Config | General |") != -1) {
           this.client.getChatApplication().setSalonsTextBrut(msg);
@@ -49,14 +51,13 @@ public class ClientRecevoirIHM extends Thread {
         } else if (msg.matches("Bienvenue .*")) {
           this.client.setStep(2);
         } else if (msg.matches("from .* -> .*")) {
-          this.addPvrMessage(this.getMessPvr(msg), this.getEnvoyeurPvr(msg));
-          this.client.getChatApplication()
-            .addNotif(this.getEnvoyeurPvr(msg));
+          String envoyeur = this.getEnvoyeurPvr(msg);
+          this.addPvrMessage(envoyeur + " : " + this.getMessPvr(msg), envoyeur);
+          this.client.getChatApplication().addNotif(this.getEnvoyeurPvr(msg));
           // met le bouton en rouge
           this.client.getChatApplication()
             .getBtnMessPvr()
-              .setStyle("-fx-background-color: red");
-          
+            .setStyle("-fx-background-color: red");
         } else if (msg.matches("users: .*")) {
           this.users = getUsersMess(msg);
         } else {
@@ -69,7 +70,6 @@ public class ClientRecevoirIHM extends Thread {
       System.exit(1);
     } catch (IOException e) {
       System.out.println("Serveur déconecté");
-
       System.exit(1);
     }
   }

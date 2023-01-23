@@ -38,9 +38,14 @@ public class ClientEnvoyerIHM extends Thread {
 
   @Override
   public void run() {
+    try{
     while (true) {
       msg = sc.nextLine();
       this.send(msg);
     }
+  }
+  catch(Exception e){
+    System.out.println("Client c'est fermé brutalement");
+  }
   }
 }

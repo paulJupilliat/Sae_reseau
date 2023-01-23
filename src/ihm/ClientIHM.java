@@ -113,7 +113,7 @@ public class ClientIHM {
     try {
       this.clientSocket.close();
     } catch (IOException e) {
-      e.printStackTrace();
+      System.out.println("Fermeture brut du client");
     }
   }
 
